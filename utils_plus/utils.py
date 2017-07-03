@@ -1,7 +1,7 @@
 import os
 
-from django.urls import reverse_lazy
-from django.apps import apps
+import django.urls
+import django.apps
 
 IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR')
 
@@ -24,7 +24,7 @@ def reverse_url(urlname, *args, **kwargs):
     Returns:
         str: reverse matched URL path
     """
-    return reverse_lazy(urlname, args=args, kwargs=kwargs)
+    return django.urls.reverse_lazy(urlname, args=args, kwargs=kwargs)
 
 
 def app_fixtures(*app_names):
@@ -41,7 +41,7 @@ def app_fixtures(*app_names):
     """
     files = []
     for app_name in app_names:
-        config = apps.get_app_config(app_name)
+        config = django.apps.apps.get_app_config(app_name)
         path = os.path.abspath(os.path.join(config.path, 'fixtures'))
         if os.path.exists(path):
             files.extend([i for i in os.listdir(path) if i.endswith('.json')])
