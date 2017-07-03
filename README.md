@@ -1,7 +1,14 @@
 # utils-plus 
 It is a simple Django app having various mixins and functions that are found commonly useful
 
-# Commands
+# Installation
+To install directly from the repo
+```
+pip install git+git://github.com/jnoortheen/django-utils-plus.git
+```
+and add it to your requirements.txt like this ``
+
+# Management Commands
  - clear_records
  - create_admin
  - test_mail

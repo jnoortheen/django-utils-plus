@@ -1,6 +1,7 @@
 import os
 
 from django.urls import reverse_lazy
+from django.apps import apps
 
 IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR')
 
@@ -34,12 +35,14 @@ def app_fixtures(*app_names):
 
     Returns:
         list:
-    >>> app_fixtures('messaging')
-    ['communication.json', 'classcommunication.json', 'mailuser.json', 'mailclass.json', 'communicationuser.json', 'notificationtype.json', 'notification.json', 'mail.json']
+    Usage:
+    >>> app_fixtures('test_app')
+    ['communication.json', 'classcommunication.json', ]
     """
     files = []
     for app_name in app_names:
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', app_name, 'fixtures'))
+        config = apps.get_app_config(app_name)
+        path = os.path.abspath(os.path.join(config.path, 'fixtures'))
         if os.path.exists(path):
             files.extend([i for i in os.listdir(path) if i.endswith('.json')])
     return files
