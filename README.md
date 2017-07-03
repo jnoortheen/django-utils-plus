@@ -6,7 +6,8 @@ To install directly from the repo
 ```
 pip install git+git://github.com/jnoortheen/django-utils-plus.git
 ```
-and add it to your requirements.txt like this ``
+and add it to your requirements.txt like this 
+`-e git://github.com/jnoortheen/django-utils-plus.git@master#egg=django_utils_plus`
 
 # Management Commands
  - clear_records
