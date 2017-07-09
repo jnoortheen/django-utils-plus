@@ -71,11 +71,48 @@ class UrlGroupTest(unittest.TestCase):
         with g('home2'):
             g.pk(view, 'pk')
         g('home3', view)
+        # for p in g.patterns():
+        #     print p, '-'
 
         patterns = g.patterns()
         self.assertEqual(next(patterns), '^home/(?P<pk>\d+)/edit/$')
         self.assertEqual(next(patterns), '^home/(?P<integer>\d+)/edit/$')
         self.assertEqual(next(patterns), '^home/(?P<string>[\\w-]+)/edit/$')
         self.assertEqual(next(patterns), '^home/(?P<variable>\\.+)/edit/$')
+        self.assertEqual(next(patterns), '^home2/(?P<pk>\\d+)/$')
+        self.assertEqual(next(patterns), '^home3/$')
+
+    def test_include_patterns_function(self):
+        raise NotImplementedError
+        # with UrlGroup('home') as g:
+        #     with g.pk():
+        #         g.incl('edit', 'url_conf_module')
+        # with g('home2'):
+        #     g.pk(view, 'pk')
+        # g('home3', view)
+        #
+        # for p in g.patterns():
+        #     print p, '-'
+        #
+        # patterns = g.patterns()
+        # self.assertEqual(next(patterns), '^home/(?P<pk>\d+)/edit/$')
+        # self.assertEqual(next(patterns), '^home2/(?P<pk>\\d+)/$')
+        # self.assertEqual(next(patterns), '^home3/$')
+
+    def test_paths_that_starts_with_a_blank_root(self):
+        # raise NotImplementedError
+        with UrlGroup('', view) as g:
+            with g('home'):
+                with g.pk():
+                    g('edit', view)
+                with g.int('integer'):
+                    g('edit', view)
+            with g('home2'):
+                g.pk(view, 'pk')
+            g('home3', view)
+        patterns = g.patterns()
+        self.assertEqual(next(patterns), '^$')
+        self.assertEqual(next(patterns), '^home/(?P<pk>\d+)/edit/$')
+        self.assertEqual(next(patterns), '^home/(?P<integer>\d+)/edit/$')
         self.assertEqual(next(patterns), '^home2/(?P<pk>\\d+)/$')
         self.assertEqual(next(patterns), '^home3/$')

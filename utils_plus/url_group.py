@@ -1,10 +1,16 @@
 from __future__ import with_statement
 
-from django.conf.urls import url, include
-from django.urls import RegexURLPattern
-from django.conf import settings
+from django.conf.urls import include
+from django.urls import RegexURLPattern, RegexURLResolver
 
 TRAILING_SLASH_SETTING_NAME = 'URL_GROUP_TRAIL_SLASH'
+TRAIL_SLASH = True
+try:
+    from django.conf import settings
+
+    TRAIL_SLASH = getattr(settings, TRAILING_SLASH_SETTING_NAME, True)
+except:
+    pass
 
 
 class UrlGroup(object):
@@ -35,7 +41,6 @@ class UrlGroup(object):
         self._paths = []
         self.urlpatterns = []
         self._current_path = None
-        self.__trail_slash = getattr(settings, TRAILING_SLASH_SETTING_NAME, True)
         self._add_path(view, url_name, path, kwargs)
 
     def __call__(self, path, view=None, url_name=None, **kwargs):
@@ -69,11 +74,35 @@ class UrlGroup(object):
             url_name (str):
             kwargs (dict): dict that is passed on to the view
         """
-        path = '^' + '/'.join(self._paths) + '{}$'.format('/' if self.__trail_slash else '')
+        paths = '/'.join(p for p in self._paths if p)
+        path = '^' + paths + '{}$'.format('/' if TRAIL_SLASH and paths else '')
         self.urlpatterns.append(RegexURLPattern(path, view, kwargs, name=url_name))
 
-    def include(self, path, module, namespace=None):
-        self.urlpatterns.append(url(path, include(module, namespace)))
+    def incl(self, path, module, namespace=None, **kwargs):
+        """
+            This is simply a wrapper around the standard include method.
+
+            # original
+            urlpatterns = [
+                url(r'^document/', include('document.urls')),
+                url(r'^core/', include('core.urls', namespace='core'), {'kwarg1':'kwval1', }),
+            ]
+            into this
+
+            # using UrlGroup
+            u = UrlGroup('')
+            u.incl('document', 'document.urls')
+            u.incl('core', 'core.urls', 'core', kwarg1='kwval1', )
+            urlpatterns = u.urlpatterns
+        Args:
+            path (str): path that the module urls appended to
+            module (str, list): module denoted as string or a list of urls
+            namespace (str): namespace for the included urls
+        """
+        self._add_path(None, '', path, {})
+        regex = '^' + '/'.join(self._paths) + '/'
+        urlconf_module, app_name, namespace = include(module, namespace=namespace)
+        self.urlpatterns.append(RegexURLResolver(regex, urlconf_module, kwargs, app_name, namespace))
 
     def patterns(self):
         for p in self.urlpatterns:
