@@ -66,6 +66,9 @@ class UrlGroup(object):
         if view: self._add_url(view, url_name, kwargs)
         self._last_path = self._paths.pop()
 
+    def __get_path(self):
+        return '/'.join(p for p in self._paths if p)
+
     def _add_url(self, view, url_name, kwargs):
         """
             adds a new URL to urlpatterns
@@ -74,13 +77,13 @@ class UrlGroup(object):
             url_name (str):
             kwargs (dict): dict that is passed on to the view
         """
-        paths = '/'.join(p for p in self._paths if p)
+        paths = self.__get_path()
         path = '^' + paths + '{}$'.format('/' if TRAIL_SLASH and paths else '')
         self.urlpatterns.append(RegexURLPattern(path, view, kwargs, name=url_name))
 
-    def incl(self, path, module, namespace=None, **kwargs):
+    def incl(self, module, namespace=None, **kwargs):
         """
-            This is simply a wrapper around the standard include method.
+            This is gives a way to handle the standard include functionality.
 
             # original
             urlpatterns = [
@@ -90,17 +93,17 @@ class UrlGroup(object):
             into this
 
             # using UrlGroup
-            u = UrlGroup('')
-            u.incl('document', 'document.urls')
-            u.incl('core', 'core.urls', 'core', kwarg1='kwval1', )
+            with UrlGroup('document') as u:
+                u.incl('document.urls')
+            with u('core'):
+                u.incl('core.urls', 'core', kwarg1='kwval1', )
             urlpatterns = u.urlpatterns
         Args:
-            path (str): path that the module urls appended to
             module (str, list): module denoted as string or a list of urls
             namespace (str): namespace for the included urls
         """
-        self._add_path(None, '', path, {})
-        regex = '^' + '/'.join(self._paths) + '/'
+        paths = self.__get_path()
+        regex = '^' + paths + '/'
         urlconf_module, app_name, namespace = include(module, namespace=namespace)
         self.urlpatterns.append(RegexURLResolver(regex, urlconf_module, kwargs, app_name, namespace))
 
