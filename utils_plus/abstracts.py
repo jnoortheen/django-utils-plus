@@ -2,11 +2,7 @@ from django.db import models
 
 
 # Copied from this [gist](https://gist.github.com/freewayz/69d1b8bcb3c225bea57bd70ee1e765f8)
-class AbstractModelIsDeletable(models.Model):
-    name = models.CharField(max_length=200, blank=True, null=True, unique=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
-    date_modified = models.DateTimeField(auto_now_add=True)
-
+class CheckDeletableModelMixin(object):
     def is_deletable(self):
         # get all the related object
         for rel in self._meta.get_fields():
@@ -19,6 +15,3 @@ class AbstractModelIsDeletable(models.Model):
             except AttributeError:  # an attribute error for field occurs when checking for AutoField
                 pass  # just pass as we dont need to check for AutoField
         return True, None
-
-    class Meta:
-        abstract = True

@@ -71,7 +71,7 @@ see url_group_test.py for more use cases
 
 # Model 
 
-1. `AbstractModelIsDeletable`
+1. `CheckDeletableModelMixin`
 adds a `is_deletable` method which then can be used to check any affected related records before actually deleting them.
 originally it is copied from this [gist](https://gist.github.com/freewayz/69d1b8bcb3c225bea57bd70ee1e765f8)
     
