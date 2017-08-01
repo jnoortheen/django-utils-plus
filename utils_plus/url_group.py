@@ -139,7 +139,7 @@ class UrlGroup(object):
 
     def pk(self, view=None, url_name=None, **kwargs):
         """
-        a wrapper around `self.var` method for integers
+            a wrapper around `self.int` method for int pk
         Args:
             view (func):
             url_name (str):
@@ -163,6 +163,19 @@ class UrlGroup(object):
             UrlGroup: self updated
         """
         return self.var(var_name, r'[\w-]+', view, url_name, **kwargs)
+
+    def slug(self, view=None, url_name=None, **kwargs):
+        """
+            a wrapper around `self.str` method for string patterns captured with variable name as slug
+        Args:
+            view (func):
+            url_name (str):
+            **kwargs:
+
+        Returns:
+            UrlGroup:
+        """
+        return self.str('slug', view, url_name, **kwargs)
 
     # with context manger methods
     def __enter__(self):
