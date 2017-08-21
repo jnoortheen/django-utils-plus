@@ -1,5 +1,5 @@
 # utils-plus 
-It is a simple Django app having various mixins and functions that are found commonly useful
+A simple reusable Django app with various mixins and utility functions.
 
 # Installation
 To install directly from the repo
