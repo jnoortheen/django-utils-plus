@@ -54,7 +54,7 @@ ug('delete', DeleteOrPublistDoc.as_view(), 'delete_document')
 urlpatterns = ug.urlpatterns
 ```
 
-you could also do this if you aren't afraid of typing more letters. There is no need to define the urlpatterns variable
+you could also do this if you aren't afraid of typing more. There is no need to define the urlpatterns variable
 separately
 ```python
 ### urls.py ###
@@ -67,7 +67,7 @@ urlpatterns('publish', DeleteOrPublistDoc.as_view(), 'publish_document', action=
 urlpatterns('delete', DeleteOrPublistDoc.as_view(), 'delete_document')
 ```
 
-see url_group_test.py for more use cases
+see url_group_test.py for more use cases and examples
 
 # Model 
 
