@@ -17,7 +17,6 @@ and add it to your requirements.txt like this
     
 # Template tags
  - klass
- - 
  
 # Middleware
  - login_required_middleware
