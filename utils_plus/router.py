@@ -107,6 +107,7 @@ class Url(object):
         self.urlpatterns.append(RegexURLResolver(regex, urlconf_module, kwargs, app_name, namespace))
 
     def patterns(self):
+        """to exhibit the patterns that the current object holds. Used for testing."""
         for p in self.urlpatterns:
             yield p.regex.pattern
 

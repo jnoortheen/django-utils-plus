@@ -100,7 +100,6 @@ class UrlGroupTest(unittest.TestCase):
         # self.assertEqual(next(patterns), '^home3/$')
 
     def test_paths_that_starts_with_a_blank_root(self):
-        # raise NotImplementedError
         with Url('', view) as g:
             with g('home'):
                 with g.pk():
@@ -116,3 +115,20 @@ class UrlGroupTest(unittest.TestCase):
         self.assertEqual(next(patterns), '^home/(?P<integer>\d+)/edit/$')
         self.assertEqual(next(patterns), '^home2/(?P<pk>\\d+)/$')
         self.assertEqual(next(patterns), '^home3/$')
+
+    def test_multi_part_single_entry(self):
+        with Url('nest1/nest2', view) as g:
+            with g('home/coming'):
+                with g.pk():
+                    g('edit', view)
+                with g.int('integer'):
+                    g('edit', view)
+            with g('first/nest3'):
+                g.pk(view, 'pk')
+            g('home3', view)
+        patterns = g.patterns()
+        self.assertEqual(next(patterns), '^nest1/nest2/$')
+        self.assertEqual(next(patterns), '^nest1/nest2/home/coming/(?P<pk>\d+)/edit/$')
+        self.assertEqual(next(patterns), '^nest1/nest2/home/coming/(?P<integer>\d+)/edit/$')
+        self.assertEqual(next(patterns), '^nest1/nest2/first/nest3/(?P<pk>\\d+)/$')
+        self.assertEqual(next(patterns), '^nest1/nest2/home3/$')
