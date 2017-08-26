@@ -101,11 +101,9 @@ class Post(models.Model):
     published = models.BooleanField()
     pub_date = models.DateField()
     
-    # standard one
-    objects = models.Manager()
-    
-    # using custom managers
-    public_posts = QueryManager().filters(published=True).order_by('-pub_date')
+    # custom managers
+    objects = QueryManager() # equivalent to models.Manager
+    public_posts = QueryManager(published=True).order_by('-pub_date')
     rel_objects = QueryManager().selects('author').prefetches('comments')
 ```
 

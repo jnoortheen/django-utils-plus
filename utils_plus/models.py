@@ -8,14 +8,19 @@ class QueryManager(models.Manager):
     """
         A DRYer way to set select_related, prefetch_related & filters to queryset
     """
+    _prefetches = ()
+    _selects = ()
+    _order_by = ()
+    _args = ()
+    _kwargs = {}
 
-    def filters(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
-            any arguments that you would pass on to filter method could be given here
+            any arguments that you would pass on to filter
         """
         self._args = args
         self._kwargs = kwargs
-        return self
+        super(QueryManager, self).__init__()
 
     def prefetches(self, *args):
         """
