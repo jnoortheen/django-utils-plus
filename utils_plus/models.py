@@ -50,15 +50,15 @@ class QueryManager(models.Manager):
         return self
 
     def get_queryset(self):
-        qs = super(QueryManager, self).get_queryset().filter(*self._args, **self._kwargs)
+        qs = super(QueryManager, self).get_queryset().filter(*self._args, **self._kwargs)  # type: models.QuerySet
 
         if self._selects:
-            qs.select_related(*self._selects)
+            qs = qs.select_related(*self._selects)
 
         if self._prefetches:
-            qs.prefetch_related(*self._prefetches)
+            qs = qs.prefetch_related(*self._prefetches)
 
         if self._order_by:
-            qs.order_by(*self._order_by)
+            qs = qs.order_by(*self._order_by)
 
         return qs
