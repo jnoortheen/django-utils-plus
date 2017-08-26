@@ -87,7 +87,27 @@ originally it is copied from this [gist](https://gist.github.com/freewayz/69d1b8
 
 2. `ChoicesEnum`
 Enumerator class for use with the django ORM choices field
+
+3. `QueryManager`
+A DRYer way to set select_related, prefetch_related & filters to queryset.
+
+```python
+from django.db import models
+from utils_plus.models import QueryManager
+
+class Post(models.Model):
+    author = models.ForeignKey('Author')
+    comments = models.ManyToManyField('Comment')
+    published = models.BooleanField()
+    pub_date = models.DateField()
     
+    # standard one
+    objects = models.Manager()
+    
+    # using custom managers
+    public_posts = QueryManager().filters(published=True).order_by('-pub_date')
+    rel_objects = QueryManager().selects('author').prefetches('comments')
+```
 
 ## Config Option
 
