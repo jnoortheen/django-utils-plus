@@ -80,7 +80,7 @@ class Url(object):
         path = '^' + paths + '{}$'.format('/' if TRAIL_SLASH and paths else '')
         self.urlpatterns.append(RegexURLPattern(path, view, kwargs, name=url_name))
 
-    def incl(self, module, namespace=None, **kwargs):
+    def incl(self, module, namespace=None, prefix=None, **kwargs):
         """
             This is gives a way to handle the standard include functionality.
 
@@ -94,17 +94,20 @@ class Url(object):
             # using Url
             with Url('document') as u:
                 u.incl('document.urls')
-            with u('core'):
-                u.incl('core.urls', 'core', kwarg1='kwval1', )
+            u.incl('core.urls', 'core', kwarg1='kwval1', prefix='core')
             urlpatterns = u.urlpatterns
         Args:
             module (str, list): module denoted as string or a list of urls
             namespace (str): namespace for the included urls
         """
+        if prefix: self._paths.append(prefix)
+
         paths = self.__get_path()
         regex = '^' + paths + '/'
         urlconf_module, app_name, namespace = include(module, namespace=namespace)
         self.urlpatterns.append(RegexURLResolver(regex, urlconf_module, kwargs, app_name, namespace))
+
+        if prefix: self._last_path = self._paths.pop()
 
     def patterns(self):
         """to exhibit the patterns that the current object holds. Used for testing."""
