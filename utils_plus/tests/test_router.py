@@ -83,21 +83,26 @@ class UrlGroupTest(unittest.TestCase):
         self.assertEqual(next(patterns), '^home3/$')
 
     def test_include_patterns_function(self):
-        raise NotImplementedError
-        # with Url('home') as g:
-        #     with g.pk():
-        #         g.incl('edit', 'url_conf_module')
-        # with g('home2'):
-        #     g.pk(view, 'pk')
-        # g('home3', view)
-        #
-        # for p in g.patterns():
-        #     print p, '-'
-        #
-        # patterns = g.patterns()
-        # self.assertEqual(next(patterns), '^home/(?P<pk>\d+)/edit/$')
-        # self.assertEqual(next(patterns), '^home2/(?P<pk>\\d+)/$')
-        # self.assertEqual(next(patterns), '^home3/$')
+        # app1 urls
+        with Url('app2') as g:
+            with g('post'):
+                with g.pk(view):
+                    g('edit', view)
+        # app1 urls
+        with Url('app1') as u:
+            with u('post'):
+                with u.pk(view):
+                    u('edit', view)
+        # root url definition
+        with Url('app') as root:
+            root.incl(u, prefix='app1')
+            root.incl(g, prefix='app2')
+
+        patterns = root.patterns()
+        self.assertEqual(next(patterns), '^app/app1/^app1/post/(?P<pk>\d+)/$')
+        self.assertEqual(next(patterns), '^app/app1/^app1/post/(?P<pk>\d+)/edit/$')
+        self.assertEqual(next(patterns), '^app/app2/^app2/post/(?P<pk>\d+)/$')
+        self.assertEqual(next(patterns), '^app/app2/^app2/post/(?P<pk>\d+)/edit/$')
 
     def test_paths_that_starts_with_a_blank_root(self):
         with Url('', view) as g:

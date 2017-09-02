@@ -112,7 +112,12 @@ class Url(object):
     def patterns(self):
         """to exhibit the patterns that the current object holds. Used for testing."""
         for p in self.urlpatterns:
-            yield p.regex.pattern
+            if isinstance(p, RegexURLPattern):
+                yield p.regex.pattern
+            if isinstance(p, RegexURLResolver):
+                pattern = p.regex.pattern
+                for incl in p.url_patterns:
+                    yield pattern + incl.regex.pattern
 
     def var(self, var_name, regex, view=None, url_name=None, **kwargs):
         """
@@ -188,3 +193,6 @@ class Url(object):
 
     def __exit__(self, *args):
         self._paths.pop()
+
+
+__all__ = ['Url', ]
