@@ -1,4 +1,4 @@
 *.pyc
 .directory
 /.idea
-
+db.sqlite3

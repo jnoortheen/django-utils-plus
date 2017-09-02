@@ -135,5 +135,5 @@ class UrlGroupTest(unittest.TestCase):
         self.assertEqual(next(patterns), '^nest1/nest2/$')
         self.assertEqual(next(patterns), '^nest1/nest2/home/coming/(?P<pk>\d+)/edit/$')
         self.assertEqual(next(patterns), '^nest1/nest2/home/coming/(?P<integer>\d+)/edit/$')
-        self.assertEqual(next(patterns), '^nest1/nest2/first/nest3/(?P<pk>\\d+)/$')
+        self.assertEqual(next(patterns), '^nest1/nest2/first/nest3/(?P<pk>\d+)/$')
         self.assertEqual(next(patterns), '^nest1/nest2/home3/$')
