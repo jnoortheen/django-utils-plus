@@ -62,3 +62,33 @@ class QueryManager(models.Manager):
             qs = qs.order_by(*self._order_by)
 
         return qs
+
+    def first_or_create(self, **kwargs):
+        """
+            return first record that matches the query if exists else create a record and return
+        Args:
+            **kwargs: class attributes and values
+
+        Returns:
+            (models.Model, bool): object & created_or_not
+
+        Usage:
+        # just for doctests - not needed
+        >>> from django.conf import settings
+        >>> settings.configure()
+        >>> from django.db import models
+        >>> class Author(models.Model):
+        ...     name = models.CharField()
+        ...     objects = QueryManager()
+        >>> Author.objects.first_or_create(name='Firstone')
+        (<Author: Firstone>, True)
+        >>> Author.objects.first_or_create(name='Firstone')
+        (<Author: Firstone>, False)
+        """
+        # try fetching first record that marches the query
+        obj = self.filter(**kwargs).first()
+        if obj:
+            return obj, False
+
+        # create and return that record
+        return self.create(**kwargs), True
