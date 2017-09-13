@@ -2,3 +2,9 @@
 .directory
 /.idea
 db.sqlite3
+
+# Distribution / packaging
+.Python
+*.egg-info/
+.installed.cfg
+*.egg
