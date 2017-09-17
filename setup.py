@@ -14,7 +14,7 @@ setup(
     version=utils_plus.__version__,
     packages=find_packages(exclude=['test_proj*', 'test_app*']),
     include_package_data=True,
-    license='LGPL License',
+    license='MIT License',
     description='A Django with small set of utilities for urls, viewsets, commands and more',
     long_description=README,
     url='https://github.com/jnoortheen/django-utils-plus',
@@ -25,7 +25,7 @@ setup(
         'Framework :: Django',
         'Framework :: Django :: 1.11',  # replace "X.Y" as appropriate
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: LGPL License',  # example license
+        'License :: OSI Approved :: MIT License',  # example license
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
