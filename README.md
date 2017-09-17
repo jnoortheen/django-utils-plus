@@ -2,9 +2,15 @@
 A simple reusable Django app with various mixins and utility functions.
 
 # Installation
-To install the latest version
+install the package using the below command
+
 ```commandline
-pip install git://github.com/jnoortheen/django-utils-plus.git@master#egg=django_utils_plus
+pip install django-utils-plus
+```
+
+or install the development version using 
+```commandline
+pip install git://github.com/jnoortheen/django-utils-plus.git@master#egg=django-utils-plus
 ```
 
 # Utils
