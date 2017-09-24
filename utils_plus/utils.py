@@ -7,6 +7,20 @@ IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR'
 
 
 def get_ip_address(request):
+    """
+        return ip address from any of the possible header address
+    Args:
+        request:
+
+    Returns:
+        str: ip address
+
+    Usage:
+    >>> reqf = getfixture('rf')
+    >>> req = reqf.get('/')
+    >>> get_ip_address(req)
+    '127.0.0.1'
+    """
     for header in IP_ADDRESS_HEADERS:
         addr = request.META.get(header)
         if addr:
@@ -23,6 +37,8 @@ def reverse_url(urlname, *args, **kwargs):
 
     Returns:
         str: reverse matched URL path
+    >>> reverse_url('blog-slug', 'slug-title')
+    '/blog/slug-title/'
     """
     return django.urls.reverse_lazy(urlname, args=args, kwargs=kwargs)
 

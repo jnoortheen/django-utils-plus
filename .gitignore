@@ -10,3 +10,4 @@ db.sqlite3
 *.egg
 dist/
 .cache/
+.coverage
