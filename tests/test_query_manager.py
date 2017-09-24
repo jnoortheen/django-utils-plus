@@ -1,7 +1,5 @@
 from django.test import TestCase
 
-from test_app.models import *
-
 
 class QueryManagerTest(TestCase):
     def test_first_or_create_function(self):
