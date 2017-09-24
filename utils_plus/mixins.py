@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from unittest.mock import Mock
+
 from django.conf.urls import url
 
 # Create your views here.
+from django.views import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
@@ -12,8 +15,19 @@ __all__ = ['ContextMixinPlus', 'CreateUpdateMixin', ]
 
 
 class ContextMixinPlus(ContextMixin):
-    """This mixin will add all url parameters to context and updates context with extra_context defined in inherited
-    classes"""
+    """
+    This mixin will add all url parameters to context and updates context with extra_context defined in inherited
+    classes
+
+    Usage:
+
+    >>> class GenricView(ContextMixinPlus, View):
+    ...     three = 0;four = 0;
+    ...     kwargs = {'one':1, 'two':2}
+    >>> view = GenricView()
+    >>> view.get_context_data(six=6, five=5).keys()
+    dict_keys(['six', 'five', 'view', 'one', 'two'])
+    """
     extra_context = {}  # This can be overridden by subclasses; it must be returning a dict
     kwargs = {}
 
@@ -39,12 +53,27 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
      this view.
     """
 
+    def _set_object(self, kwargs):
+        """
+
+        Args:
+            kwargs (dict):
+
+        Returns:
+
+        >>> c = CreateUpdateMixin()
+        >>> c.get_object = Mock()
+        >>> obj = c._set_object({'pk':1})
+        >>> c.get_object.assert_called_once()
+        """
+        return self.get_object() if 'pk' in kwargs else None
+
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object() if kwargs.has_key('pk') else None
+        self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object() if kwargs.has_key('pk') else None
+        self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).post(request, *args, **kwargs)
 
     @classmethod
