@@ -119,5 +119,4 @@ class Post(models.Model):
 ## Testing
     
     - clone the repo and run migrations
-    - `python manage.py test` will run all the test for the utils_plus app
-    
+    - `fab test` will run all the test for the app

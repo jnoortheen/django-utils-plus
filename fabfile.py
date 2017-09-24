@@ -21,3 +21,8 @@ def release():
     # username: jnoortheen
     # password: pwd
     local('python setup.py sdist upload')
+
+
+@task
+def test():
+    local('pytest --cov utils_plus')
