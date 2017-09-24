@@ -26,7 +26,13 @@ class QueryManager(models.Manager):
         """
 
         Args:
-            *args: this will be passed onto queryset's select_related
+            *args: this will be passed onto queryset's prefetch
+        Returns:
+            QueryManager:
+
+        >>> objects = QueryManager().prefetches('m2m_field', 'rel_model_field')
+        >>> objects._prefetches
+        ('m2m_field', 'rel_model_field')
         """
         self._prefetches = args
         return self
@@ -36,6 +42,12 @@ class QueryManager(models.Manager):
 
         Args:
             *args: this will be passed onto queryset's select_related
+        Returns:
+            QueryManager:
+
+        >>> objects = QueryManager().selects('fk_field', 'rel_model_field')
+        >>> objects._selects
+        ('fk_field', 'rel_model_field')
         """
         self._selects = args
         return self
@@ -45,11 +57,23 @@ class QueryManager(models.Manager):
 
         Args:
             *args: this will be passed onto queryset's select_related
+
+        Returns:
+            QueryManager:
+
+        >>> objects = QueryManager().order_by('-id', '-field_name')
+        >>> objects._order_by
+        ('-id', '-field_name')
         """
         self._order_by = args
         return self
 
     def get_queryset(self):
+        """
+
+        Returns:
+            models.QuerySet:
+        """
         qs = super(QueryManager, self).get_queryset().filter(*self._args, **self._kwargs)  # type: models.QuerySet
 
         if self._selects:
