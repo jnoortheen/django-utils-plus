@@ -2,15 +2,11 @@ from __future__ import with_statement
 
 from django.conf.urls import include
 from django.urls import RegexURLPattern, RegexURLResolver
+from django.conf import settings
 
 TRAILING_SLASH_SETTING_NAME = 'URL_GROUP_TRAIL_SLASH'
-TRAIL_SLASH = True
-try:
-    from django.conf import settings
 
-    TRAIL_SLASH = getattr(settings, TRAILING_SLASH_SETTING_NAME, True)
-except:
-    pass
+TRAIL_SLASH = getattr(settings, TRAILING_SLASH_SETTING_NAME, True)
 
 
 class Url(object):
