@@ -73,13 +73,10 @@ class QueryManager(models.Manager):
             (models.Model, bool): object & created_or_not
 
         Usage:
-        # just for doctests - not needed
-        >>> from django.conf import settings
-        >>> settings.configure()
+
+        >>> db = getfixture('db')
         >>> from django.db import models
-        >>> class Author(models.Model):
-        ...     name = models.CharField()
-        ...     objects = QueryManager()
+        >>> from tests.test_app.models import Author
         >>> Author.objects.first_or_create(name='Firstone')
         (<Author: Firstone>, True)
         >>> Author.objects.first_or_create(name='Firstone')

@@ -1,6 +1,3 @@
-from django.db import models
-
-
 # Copied from this [gist](https://gist.github.com/freewayz/69d1b8bcb3c225bea57bd70ee1e765f8)
 class CheckDeletableModelMixin(object):
     def is_deletable(self):

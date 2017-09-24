@@ -37,7 +37,7 @@ def app_fixtures(*app_names):
         list:
     Usage:
     >>> app_fixtures('test_app')
-    ['communication.json', 'classcommunication.json', ]
+    ['fixture_2.json', 'fixture_1.json']
     """
     files = []
     for app_name in app_names:
