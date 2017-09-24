@@ -5,8 +5,7 @@ recursive-include utils_plus/static *
 recursive-include utils_plus/templates *
 
 exclude manage.py
-recursive-exclude test_app *
-recursive-exclude test_proj *
+recursive-exclude tests *
 
 recursive-exclude * __pycache__
 recursive-exclude * *.pyc
