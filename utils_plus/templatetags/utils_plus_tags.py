@@ -26,9 +26,11 @@ def klass(obj):
     return obj.__class__.__name__
 
 
-settings.STATICFILES_DIRS = settings.STATICFILES_DIRS + [
-    get_node_modules_dir()
-]
+if settings.DEBUG:
+    # add node_modules to list of static folders to find and load in local development
+    settings.STATICFILES_DIRS = settings.STATICFILES_DIRS + [
+        get_node_modules_dir()
+    ]
 
 
 @register.simple_tag
@@ -46,12 +48,21 @@ def unpkg(path):
 
     Usage:
 
-        load the template tags and use `unpkg` like `static` tag
+        load the template tags and use `unpkg` like `static` tag,
 
         ```
         {% load static utils_plus_tags %}
         <link rel="stylesheet" type="text/css" href="{% unpkg 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+        <script src="{% unpkg 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <script src="{% unpkg 'jquery/dist/jquery.min.js' %}"></script>
         ```
+    Note:
+        1. the package.json should be present in the project ROOT DIR.
+        2. When DEBUG is True the packages must  be installed and should be available already inside `node_modules`.
     """
 
-    return static(path) if settings.DEBUG else get_unpkg_url(path)
+    return (
+        static(path)
+        if settings.DEBUG
+        else get_unpkg_url(path)
+    )

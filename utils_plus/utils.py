@@ -68,20 +68,26 @@ def app_fixtures(*app_names):
 
 
 def get_node_modules_dir():
-    os.path.join(os.path.abspath(os.path.dirname(__name__)), 'node_modules')
+    return os.path.join(os.path.abspath(os.path.dirname(__name__)), 'node_modules')
 
 
-NODE_PKGS = json.load(os.path.join(os.path.abspath(os.path.dirname(__name__)), 'package.json'))
+NODE_PKGS = {}
+
+
+def load_node_pkgs():
+    """read and parse package.json"""
+    # todo: handle file not being found
+    import codecs
+    with codecs.open(os.path.join(os.path.abspath(os.path.dirname(__name__)), 'package.json'), 'r', 'utf-8') as f:
+        pkg_json = json.loads(f.read())
+        NODE_PKGS.update(pkg_json.get('dependencies', {}))
+        NODE_PKGS.update(pkg_json.get('devDependencies', {}))
 
 
 def get_node_pkg_version(pkg):
-    return (
-        NODE_PKGS['dependencies'][pkg]
-        if 'dependencies' in NODE_PKGS and pkg in NODE_PKGS['dependencies']
-        else NODE_PKGS['devDependencies'][pkg]
-        if 'devDependencies' in NODE_PKGS and pkg in NODE_PKGS['devDependencies']
-        else ''
-    )
+    if not NODE_PKGS:
+        load_node_pkgs()
+    return NODE_PKGS.get(pkg, '')
 
 
 def get_unpkg_url(path):
