@@ -15,7 +15,7 @@ setup(
     packages=find_packages(exclude=['tests*', ]),
     include_package_data=True,
     license='MIT License',
-    description='A Django with small set of utilities for urls, viewsets, commands and more',
+    description='A reusable Django app with small set of utilities for urls, viewsets, commands and more',
     long_description=README,
     url='https://github.com/jnoortheen/django-utils-plus',
     author='Noortheen Raja J',
