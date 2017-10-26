@@ -74,11 +74,17 @@ def get_node_modules_dir():
 NODE_PKGS = {}
 
 
+def get_node_pkgs_path():
+    from django.conf import settings
+    root = getattr(settings, 'NODE_PKG_DIR', os.path.abspath(os.path.dirname(__name__)))
+    return os.path.join(root, 'package.json')
+
+
 def load_node_pkgs():
     """read and parse package.json"""
     # todo: handle file not being found
     import codecs
-    with codecs.open(os.path.join(os.path.abspath(os.path.dirname(__name__)), 'package.json'), 'r', 'utf-8') as f:
+    with codecs.open(get_node_pkgs_path(), 'r', 'utf-8') as f:
         pkg_json = json.loads(f.read())
         NODE_PKGS.update(pkg_json.get('dependencies', {}))
         NODE_PKGS.update(pkg_json.get('devDependencies', {}))
@@ -91,6 +97,16 @@ def get_node_pkg_version(pkg):
 
 
 def get_unpkg_url(path):
+    """
+
+    Args:
+        path (str):
+
+    Returns:
+        str:
+
+
+    """
     path = path.lstrip('/')
     pkg_name, filepath = path.split('/', 1)
     pkg_version = get_node_pkg_version(pkg_name)

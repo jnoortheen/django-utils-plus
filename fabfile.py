@@ -25,4 +25,9 @@ def release():
 
 @task
 def test():
-    local('pytest --cov utils_plus --cov-report term-missing')
+    local(
+        'pytest '
+        '--cov utils_plus '
+        '--cov-report term-missing '
+        '--cov-report term:skip-covered '
+    )
