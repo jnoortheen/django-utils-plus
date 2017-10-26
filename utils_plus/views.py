@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from django.http import HttpResponse
+from .mixins import CreateUpdateMixin
 
 
 def return_path_view(request, *args, **kwargs):
@@ -18,3 +20,7 @@ def return_path_view(request, *args, **kwargs):
     b"Requested / with Args: ('arg1', 'arg2') {'kwarg': 1}"
     """
     return HttpResponse("Requested " + request.path + " with Args: {} {}".format(args, kwargs))
+
+
+class CreateUpdateView(CreateUpdateMixin):
+    pass
