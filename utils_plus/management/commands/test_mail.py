@@ -22,6 +22,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         to_email = options.get('to') or settings.MANAGERS[0][1]
-        if not to_email:
-            raise Exception("Recepient list can't be empty")
         send_mail("It works!", "Test email plain text content", settings.DEFAULT_FROM_EMAIL, [to_email])
