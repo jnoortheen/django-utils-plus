@@ -60,42 +60,70 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
             kwargs (dict):
 
         Returns:
-
-        >>> c = CreateUpdateMixin()
-        >>> c.get_object = Mock()
-        >>> obj = c._set_object({'pk':1})
-        >>> c.get_object.assert_called_once()
         """
         return self.get_object() if 'pk' in kwargs else None
 
     def get(self, request, *args, **kwargs):
+        """
+
+        Args:
+            request:
+            *args:
+            **kwargs:
+
+        Returns:
+
+        >>> c = CreateUpdateMixin()
+        >>> c.get_object = Mock()
+        >>> ProcessFormView.get = Mock()
+        >>> obj = c.get(request='', pk=1)
+        >>> c.get_object.assert_called_once()
+        """
         self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """
+
+        Args:
+            request:
+            *args:
+            **kwargs:
+
+        Returns:
+
+        >>> c = CreateUpdateMixin()
+        >>> c.get_object = Mock()
+        >>> ProcessFormView.post = Mock()
+        >>> obj = c.post(request='', pk=1)
+        >>> c.get_object.assert_called_once()
+        """
         self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).post(request, *args, **kwargs)
 
     @classmethod
-    def urls(cls):
+    def urls(cls, **initkwargs):
         """
             since this class works like a ViewSet, it is a good idea to create a urls method which would add routes for
             create/update of a model object. This add two routes for the given namespace.
         Returns:
             list: url patterns
         Usage:
-            urls.py ~
+            in urls.py see tests/test_app
                 urlpatterns = [
                     url(r'^xfield/', include(CreateUpdateMixin.urls(), namespace='xfield')),
                 ]
-            views/templates  or any
-                reverse('xfield:add') = '/xfield/add/'
-                reverse('xfield:edit', args=[12]) = '/xfield/edit/12'
+
+        >>> from django.urls import reverse
+        >>> reverse('author:add')
+        '/blog/author_profile/add/'
+        >>> reverse('author:edit', args=[12])
+        '/blog/author_profile/edit/12/'
         """
         return [
-            url('^add/$', cls.as_view(), name='add'),
-            url('^edit/(?P<pk>\d+)/$', cls.as_view(), name='edit'),
+            url('^add/$', cls.as_view(**initkwargs), name='add'),
+            url('^edit/(?P<pk>\d+)/$', cls.as_view(**initkwargs), name='edit'),
 
             # if you use `django-addanother` then this will come in handy
-            url('^edit/(?P<pk>__fk__)/$', cls.as_view(), name='edit-s'),
+            url('^edit/(?P<pk>__fk__)/$', cls.as_view(**initkwargs), name='edit-s'),
         ]
