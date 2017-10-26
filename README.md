@@ -24,6 +24,27 @@ pip install git://github.com/jnoortheen/django-utils-plus.git@master#egg=django-
     
 ## Template tags
  - klass
+ - unpkg
+ 
+### unpkg
+ Alternative to standard `static` template tag. When you are using external static files/libraries
+like bootstrap, jquery you may want to load them from CDNs instead of managing them yourself in production.
+This tag helps you to do that. When `settings.DEBUG` is false, this will return paths that resolved from
+`package.json` to versioned `unpkg.com`. Otherwise it will resolve to `node_modules` locally.
+##### Usage:
+
+load the template tags and use `unpkg` like `static` tag,
+
+```
+{% load static utils_plus_tags %}
+<link rel="stylesheet" type="text/css" href="{% unpkg 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+<script src="{% unpkg 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% unpkg 'jquery/dist/jquery.min.js' %}"></script>
+```
+##### Note:
+1. the package.json should be present in the project ROOT DIR.
+1. When DEBUG is True the packages must  be installed and should be available already inside `node_modules`.
+ 
 
 ## Middleware
  - login_required_middleware
