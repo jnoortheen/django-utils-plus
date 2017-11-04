@@ -2,10 +2,18 @@ from django.db import models
 
 # Create your models here.
 from utils_plus.abstracts import CheckDeletableModelMixin
+from utils_plus.choices import ChoicesEnum
 from utils_plus.models import QueryManager
+from utils_plus.fields import ChoicesEnumField
 
 
 class Author(CheckDeletableModelMixin, models.Model, ):
+    class Title(ChoicesEnum):
+        mr = 'Mr.'
+        ms = 'Ms.'
+        mrs = 'Mrs.'
+
+    title = ChoicesEnumField(Title, default=Title.mr)
     name = models.CharField(max_length=20)
 
     objects = QueryManager()
