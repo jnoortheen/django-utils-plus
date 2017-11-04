@@ -16,6 +16,10 @@ class IntChoicesEnum(enum.IntEnum):
     >>> class COLOR_TYPE(IntChoicesEnum):
     ...     red_value = 0
     ...     green_value = 1
+
+    in models.py you can use it like this
+    models.SmallPositiveIntegerField('Color', choices=COLOR_TYPE.choices(), default=COLOR_TYPE.red)
+
     >>> COLOR_TYPE.red_value.value
     0
     >>> assert COLOR_TYPE.red_value == 0
@@ -23,11 +27,6 @@ class IntChoicesEnum(enum.IntEnum):
     0
     >>> tuple(COLOR_TYPE.choices())
     ((0, 'Red Value'), (1, 'Green Value'))
-
-
-        in models.py you can use it like this
-    ... models.SmallPositiveIntegerField('Color', choices=COLOR_TYPE.choices(), default=COLOR_TYPE.red)
-
     """
 
     @classmethod
@@ -57,12 +56,42 @@ class ChoicesEnum(StrEnum):
     'red'
     >>> tuple(COLOR_TYPE.choices())
     (('red', 'RED'), ('green', 'GREEN'))
+    >>> COLOR_TYPE.max_length()
+    5
+    >>> COLOR_TYPE.red.next().name
+    'green'
+    >>> COLOR_TYPE.green.next().name
+    'green'
+    >>> COLOR_TYPE.green.prev().name
+    'red'
+    >>> COLOR_TYPE.red.prev().name
+    'red'
 
-    in models.py use can use it like below
+    in models.py you can use it like below
     ...
     models.CharField('Color', choices=COLOR_TYPE.choices(), default=COLOR_TYPE.red.name, max_length=10)
     ...
     """
+
+    def next(self):
+        cls = self.__class__
+        members = list(cls)
+        index = members.index(self) + 1
+        if index >= len(members):
+            return self
+        return members[index]
+
+    def prev(self):
+        cls = self.__class__
+        members = list(cls)
+        index = members.index(self) - 1
+        if index < 0:
+            return self
+        return members[index]
+
+    @classmethod
+    def max_length(cls):
+        return max((len(x.name) for x in cls))
 
     @classmethod
     def choices(cls):
