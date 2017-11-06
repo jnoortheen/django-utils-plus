@@ -7,12 +7,13 @@ from utils_plus.models import QueryManager
 from utils_plus.fields import ChoicesEnumField
 
 
-class Author(CheckDeletableModelMixin, models.Model, ):
-    class Title(ChoicesEnum):
-        mr = 'Mr.'
-        ms = 'Ms.'
-        mrs = 'Mrs.'
+class Title(ChoicesEnum):
+    mr = 'Mr.'
+    ms = 'Ms.'
+    mrs = 'Mrs.'
 
+
+class Author(CheckDeletableModelMixin, models.Model, ):
     title = ChoicesEnumField(Title, default=Title.mr)
     name = models.CharField(max_length=20)
 

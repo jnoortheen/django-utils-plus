@@ -13,3 +13,11 @@ def test_is_deletable_mixin(records):
     deletable, books = auth.is_deletable()
     assert not deletable
     assert books.count() == 1
+
+
+def test_choices_enum_field(records):
+    from tests.test_app.models import Author
+    from utils_plus.choices import ChoicesEnum
+
+    author = Author.objects.first()
+    assert isinstance(author.title, ChoicesEnum)
