@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import OrderedDict
+
 from django.db import models
 
 
@@ -8,9 +10,6 @@ class QueryManager(models.Manager):
     """
         A DRYer way to set select_related, prefetch_related & filters to queryset
     """
-    _prefetches = ()
-    _selects = ()
-    _order_by = ()
     _args = ()
     _kwargs = {}
 
@@ -20,7 +19,21 @@ class QueryManager(models.Manager):
         """
         self._args = args
         self._kwargs = kwargs
+        self._queryset_methods = OrderedDict()
         super(QueryManager, self).__init__()
+
+    def _save_args(self, name, args):
+        """
+
+        Args:
+            name (str): name of queryset method like select_related, etc.,
+            args (tuple): list of arguments
+
+        Returns:
+            QueryManager:
+        """
+        self._queryset_methods[name] = args
+        return self
 
     def prefetches(self, *args):
         """
@@ -29,13 +42,8 @@ class QueryManager(models.Manager):
             *args: this will be passed onto queryset's prefetch
         Returns:
             QueryManager:
-
-        >>> objects = QueryManager().prefetches('m2m_field', 'rel_model_field')
-        >>> objects._prefetches
-        ('m2m_field', 'rel_model_field')
         """
-        self._prefetches = args
-        return self
+        return self._save_args('prefetch_related', args)
 
     def selects(self, *args):
         """
@@ -44,13 +52,14 @@ class QueryManager(models.Manager):
             *args: this will be passed onto queryset's select_related
         Returns:
             QueryManager:
-
-        >>> objects = QueryManager().selects('fk_field', 'rel_model_field')
-        >>> objects._selects
-        ('fk_field', 'rel_model_field')
         """
-        self._selects = args
-        return self
+        return self._save_args('select_related', args)
+
+    def values(self, *args):
+        return self._save_args('values', args)
+
+    def only(self, *args):
+        return self._save_args('only', args)
 
     def order_by(self, *args):
         """
@@ -60,13 +69,8 @@ class QueryManager(models.Manager):
 
         Returns:
             QueryManager:
-
-        >>> objects = QueryManager().order_by('-id', '-field_name')
-        >>> objects._order_by
-        ('-id', '-field_name')
         """
-        self._order_by = args
-        return self
+        return self._save_args('order_by', args)
 
     def get_queryset(self):
         """
@@ -76,14 +80,8 @@ class QueryManager(models.Manager):
         """
         qs = super(QueryManager, self).get_queryset().filter(*self._args, **self._kwargs)  # type: models.QuerySet
 
-        if self._selects:
-            qs = qs.select_related(*self._selects)
-
-        if self._prefetches:
-            qs = qs.prefetch_related(*self._prefetches)
-
-        if self._order_by:
-            qs = qs.order_by(*self._order_by)
+        for method_name in self._queryset_methods:
+            qs = getattr(qs, method_name)(*self._queryset_methods[method_name])
 
         return qs
 

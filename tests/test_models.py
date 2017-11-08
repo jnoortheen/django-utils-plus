@@ -1,3 +1,6 @@
+from collections import OrderedDict
+
+
 def test_queryset_manager_filters(records):
     from tests.test_app.models import Book
     assert str(
@@ -21,3 +24,15 @@ def test_choices_enum_field(records):
 
     author = Author.objects.first()
     assert isinstance(author.title, ChoicesEnum)
+
+
+def test_querymanager():
+    from utils_plus.models import QueryManager
+    objects = (QueryManager()
+        .selects('fk_field', 'rel_model_field')
+        .prefetches('m2m_field', 'rel_model_field')
+        .order_by('-id', '-field_name'))
+
+    assert objects._queryset_methods == OrderedDict(
+        [('select_related', ('fk_field', 'rel_model_field')), ('prefetch_related', ('m2m_field', 'rel_model_field')),
+         ('order_by', ('-id', '-field_name'))])
