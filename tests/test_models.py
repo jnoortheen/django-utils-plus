@@ -31,8 +31,14 @@ def test_querymanager():
     objects = (QueryManager()
         .selects('fk_field', 'rel_model_field')
         .prefetches('m2m_field', 'rel_model_field')
-        .order_by('-id', '-field_name'))
+        .only('field1', 'field2')
+        .values('field1', 'field2')
+        .order_by('-id', '-field_name')
+        )
 
     assert objects._queryset_methods == OrderedDict(
-        [('select_related', ('fk_field', 'rel_model_field')), ('prefetch_related', ('m2m_field', 'rel_model_field')),
+        [('select_related', ('fk_field', 'rel_model_field')),
+         ('prefetch_related', ('m2m_field', 'rel_model_field')),
+         ('only', ('field1', 'field2')),
+         ('values', ('field1', 'field2')),
          ('order_by', ('-id', '-field_name'))])
