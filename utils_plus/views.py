@@ -28,8 +28,7 @@ def return_path_view(request, *args, **kwargs):
 
 
 class FileResponseView(View):
-    def __index__(self, file_path):
-        self.file_path = file_path
+    file_path = None
 
     def get(self, request):
         content_type, encoding = mimetypes.guess_type(self.file_path)
