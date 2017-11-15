@@ -34,13 +34,17 @@ class ChoicesEnumField(models.CharField):
         return name, path, args, kwargs
 
     def to_python(self, value):
-        if isinstance(value, str):
+        if not isinstance(value, self.enum_class):
             return self.enum_class[value]
 
         return value
 
+    def clean(self, value, model_instance):
+        data = self.to_python(value)
+        return data
+
     def from_db_value(self, value, expression, connection, context):
-        return (value if value is None else self.enum_class[value])
+        return value if value is None else self.enum_class[value]
 
     def get_prep_value(self, value):
-        return (value.name if isinstance(value, self.enum_class) else value)
+        return value.name if isinstance(value, self.enum_class) else value
