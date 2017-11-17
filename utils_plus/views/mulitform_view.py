@@ -1,5 +1,3 @@
-"""used this gist https://gist.github.com/jamesbrobb/748c47f46b9bd224b07f"""
-
 from django.views.generic.base import ContextMixin, TemplateResponseMixin
 from django.views.generic.edit import ProcessFormView
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden
@@ -24,7 +22,7 @@ class MultiFormMixin(ContextMixin):
 
     def get_form_kwargs(self, form_name, bind_form=False):
         kwargs = {}
-        kwargs.update({'initial': self.get_initial(form_name)})
+        kwargs.update(self.get_initial(form_name))
         kwargs.update({'prefix': self.get_prefix(form_name)})
 
         if bind_form:
@@ -115,7 +113,9 @@ class ProcessMultipleFormsView(ProcessFormView):
     def _process_all_forms(self, form_classes):
         forms = self.get_forms(form_classes, None, True)
         if all([form.is_valid() for form in forms.values()]):
-            return self.forms_valid(forms)
+            for form_name in forms:
+                self.forms_valid(forms, form_name)
+            return self.forms_valid(forms, None)
         else:
             return self.forms_invalid(forms)
 
