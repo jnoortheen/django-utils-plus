@@ -5,7 +5,7 @@ import mimetypes
 from django.http import HttpResponse, FileResponse
 from django.views import View
 
-from .mixins import CreateUpdateMixin
+from ..mixins import CreateUpdateMixin
 
 
 def return_path_view(request, *args, **kwargs):
