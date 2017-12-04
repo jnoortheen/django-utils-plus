@@ -57,6 +57,11 @@ class Url(object):
                 Ex. url('^add/$', cls.as_view(), name='add'), here the whole ^add is the path
             kwargs (dict): dict that is passed on to the view
         """
+        if kwargs: assert isinstance(kwargs, dict)
+        if path: assert isinstance(path, str)
+        if view: assert callable(view)
+        if url_name: assert isinstance(url_name, str)
+
         self._paths.append(path)
         if view: self._add_url(view, url_name, kwargs)
         self._last_path = self._paths.pop()
@@ -125,6 +130,10 @@ class Url(object):
             url_name (str): url name
             **kwargs: this dic will be passed to the view as kwargs
         """
+        assert isinstance(var_name, str)
+        assert isinstance(regex, str)
+        if view: assert callable(view)
+        if url_name: assert isinstance(url_name, str)
         return self.__call__(r'(?P<{}>{})'.format(var_name, regex), view, url_name, **kwargs)
 
     def int(self, var_name, view=None, url_name=None, **kwargs):
