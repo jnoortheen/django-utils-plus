@@ -52,8 +52,8 @@ def app_fixtures(*app_names):
     Returns:
         list:
     Usage:
-    >>> app_fixtures('test_app')
-    ['fixture_2.json', 'fixture_1.json']
+    >>> set(app_fixtures('test_app')) == {'fixture_2.json', 'fixture_1.json'}
+    True
     """
     from django.apps import apps
     import os
@@ -96,18 +96,17 @@ def get_node_pkg_version(pkg):
     return NODE_PKGS.get(pkg, '')
 
 
-def get_unpkg_url(path):
+def get_cdn_url(cdn: str, path):
     """
 
     Args:
-        path (str):
+        cdn: URL of CDN like `unpkg.com` or `cdn.jsdelivr.net/npm`
+        path:
 
     Returns:
-        str:
-
 
     """
     path = path.lstrip('/')
     pkg_name, filepath = path.split('/', 1)
     pkg_version = get_node_pkg_version(pkg_name)
-    return '//unpkg.com/{pkg_name}@{pkg_version}/{filepath}'.format(**locals())
+    return '//{cdn}/{pkg_name}@{pkg_version}/{filepath}'.format(**locals())

@@ -12,3 +12,4 @@ dist/
 .cache/
 .coverage
 .fab_tasks~
+.pytest_cache/

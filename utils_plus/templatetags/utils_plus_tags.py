@@ -4,7 +4,7 @@ from django import template
 from django.conf import settings
 from django.templatetags.static import static
 
-from ..utils import get_node_modules_dir, get_unpkg_url
+from ..utils import get_node_modules_dir, get_cdn_url
 
 register = template.Library()
 
@@ -31,6 +31,15 @@ if settings.DEBUG:
     settings.STATICFILES_DIRS = settings.STATICFILES_DIRS + [
         get_node_modules_dir()
     ]
+
+
+@register.simple_tag
+def npmcdn(cdn_url, path):
+    return (
+        static(path)
+        if settings.DEBUG
+        else get_cdn_url(cdn_url, path)
+    )
 
 
 @register.simple_tag
@@ -61,8 +70,13 @@ def unpkg(path):
         2. When DEBUG is True the packages must  be installed and should be available already inside `node_modules`.
     """
 
-    return (
-        static(path)
-        if settings.DEBUG
-        else get_unpkg_url(path)
-    )
+    return npmcdn('unpkg.com', path)
+
+
+@register.simple_tag
+def jsdelivr(path):
+    """
+        same as above with CDN as jsdelivr
+    """
+
+    return npmcdn('cdn.jsdelivr.net/npm')
