@@ -79,4 +79,4 @@ def jsdelivr(path):
         same as above with CDN as jsdelivr
     """
 
-    return npmcdn('cdn.jsdelivr.net/npm')
+    return npmcdn('cdn.jsdelivr.net/npm', path)
