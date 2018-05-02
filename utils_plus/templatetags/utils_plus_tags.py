@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
+from django.utils.safestring import mark_safe
 
 from ..utils import get_node_modules_dir, get_npm_pkg_path
 
@@ -93,13 +94,15 @@ def jsdelivr(path):
 
 def jsdelivr_combined_tags_helper(tag_template, *paths):
     if settings.DEBUG:
-        return "".join([
+        tag_str = "".join([
             tag_template.format(static(path)) for path in paths
         ])
+    else:
+        npm_paths = ','.join(["npm/" + get_npm_pkg_path(path) for path in paths])
+        cdn_url = '//{}/{}'.format('cdn.jsdelivr.net/combine/', npm_paths)
+        tag_str = mark_safe(tag_template.format(cdn_url))
 
-    npm_paths = ','.join(["npm/" + get_npm_pkg_path(path) for path in paths])
-    cdn_url = '//{}/{}'.format('cdn.jsdelivr.net/combine/', npm_paths)
-    return tag_template.format(cdn_url)
+    return mark_safe(tag_str)
 
 
 @register.simple_tag
