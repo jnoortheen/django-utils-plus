@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "django-utils-plus"
+version = "0.6.6"
+description = "A reusable Django app with small set of utilities for urls, viewsets, commands and more"
+authors = ["jnoortheen <jnoortheen@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">= 3.6"
+django = "^2.1"
+
+[tool.poetry.dev-dependencies]
+pytest-httpserver = "^0.1.1"
+pytest-django = "^3.4"
+pytest-pythonpath = "^0.7.3"
