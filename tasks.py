@@ -1,14 +1,11 @@
-from fabric.api import task
-from fabric.operations import local
+import invoke
 
-import utils_plus
-
-
-@task
-def release():
-    local('git push')
-    local('git tag {}'.format(utils_plus.__version__))
-    local('git push --tags')
+@invoke.task
+def release(c):
+    import utils_plus
+    c.run('git push')
+    c.run('git tag {}'.format(utils_plus.__version__))
+    c.run('git push --tags')
 
     # dont forget to have this file
     # ~/.pypirc
@@ -20,12 +17,12 @@ def release():
     # repository: https://upload.pypi.org/legacy/
     # username: jnoortheen
     # password: pwd
-    local('python setup.py sdist upload')
+    c.run('python setup.py sdist upload')
 
 
-@task
-def test():
-    local(
+@invoke.task
+def test(c):
+    c.run(
         'pytest '
         '--cov utils_plus '
         '--cov-report term-missing '
