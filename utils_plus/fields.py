@@ -43,7 +43,7 @@ class ChoicesEnumField(models.CharField):
         data = self.to_python(value)
         return data
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         return value if value is None else self.enum_class[value]
 
     def get_prep_value(self, value):
