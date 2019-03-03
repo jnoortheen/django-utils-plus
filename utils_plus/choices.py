@@ -1,4 +1,5 @@
 import enum
+from functools import total_ordering
 
 
 class StrEnum(str, enum.Enum):
@@ -35,10 +36,10 @@ class IntChoicesEnum(enum.IntEnum):
             yield (attr.value, attr.name.replace('_', ' ').title())
 
 
-class ChoicesEnum(StrEnum):
+@total_ordering
+class ChoicesEnum(enum.Enum):
     """
-        Enumerator class for use with the django ORM CharField choices. The values must be string otherwise they will be
-        converted to string.
+        Enumerator class for use with the django ORM CharField choices.
 
     Usage:
         create a class with choices as fields like this
@@ -73,10 +74,16 @@ class ChoicesEnum(StrEnum):
     ...
     """
 
+    @property
+    def member_index(self):
+        if not hasattr(self.__class__, '_reverse_index'):
+            self.__class__._reverse_index = {cls: idx for idx, cls in enumerate(self.__class__)}
+        return self.__class__._reverse_index[self]
+
     def next(self):
         cls = self.__class__
         members = list(cls)
-        index = members.index(self) + 1
+        index = self.member_index + 1
         if index >= len(members):
             return self
         return members[index]
@@ -84,10 +91,15 @@ class ChoicesEnum(StrEnum):
     def prev(self):
         cls = self.__class__
         members = list(cls)
-        index = members.index(self) - 1
+        index = self.member_index - 1
         if index < 0:
             return self
         return members[index]
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.member_index < other.member_index
+        return NotImplemented
 
     @classmethod
     def max_length(cls):
