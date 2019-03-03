@@ -1,7 +1,7 @@
 from __future__ import with_statement
 
 from django.conf.urls import include
-from django.urls import RegexURLPattern, RegexURLResolver
+from django.urls.resolvers import URLPattern, URLResolver
 from django.conf import settings
 
 TRAILING_SLASH_SETTING_NAME = 'URL_GROUP_TRAIL_SLASH'
@@ -18,15 +18,17 @@ class Url(object):
 
     ### urls.py ###
 
-    with Url('editor') as ug:
-        with ug.int('doc_pk'):
-            ug('edit', DocEditorView.as_view(), 'edit-doc')
-            ug('export', DocExporterView.as_view(), 'export-doc')
-    ug('docs', Docs.as_view(), 'student-documents')
-    ug('publish', DeleteOrPublistDocument.as_view(), 'publish_document', action='publish')
-    ug('delete', DeleteOrPublistDocument.as_view(), 'delete_document')
-
-    urlpatterns = ug.urlpatterns
+    urlpatterns = u[
+        u('editor')[
+            u.int('doc_pk')[
+                u('edit', DocEditorView.as_view(), 'edit-doc'),
+                u('export', DocExporterView.as_view(), 'export-doc'),
+            ]
+        ],
+        u('docs', Docs.as_view(), 'student-documents'),
+        u('publish', DeleteOrPublistDocument.as_view(), 'publish_document', action='publish'),
+        u('delete', DeleteOrPublistDocument.as_view(), 'delete_document'),
+    ]
 
     see tests/test_router.py for more use cases
     """
@@ -79,7 +81,7 @@ class Url(object):
         """
         paths = self.__get_path()
         path = '^' + paths + '{}$'.format('/' if TRAIL_SLASH and paths else '')
-        self.urlpatterns.append(RegexURLPattern(path, view, kwargs, name=url_name))
+        self.urlpatterns.append(RegexPattern(path, view, kwargs, name=url_name))
 
     def incl(self, module, namespace=None, prefix=None, **kwargs):
         """
@@ -113,7 +115,7 @@ class Url(object):
     def patterns(self):
         """to exhibit the patterns that the current object holds. Used for testing."""
         for p in self.urlpatterns:
-            if isinstance(p, RegexURLPattern):
+            if isinstance(p, RegexPattern):
                 yield p.regex.pattern
             if isinstance(p, RegexURLResolver):
                 pattern = p.regex.pattern
@@ -198,6 +200,10 @@ class Url(object):
 
     def __exit__(self, *args):
         self._paths.pop()
+
+    def __getitem__(self, item):
+        # todo: implement new way to organise URLs
+        return []
 
 
 __all__ = ['Url', ]
