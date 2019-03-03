@@ -25,6 +25,4 @@ def test(c):
     c.run(
         'pytest '
         '--cov utils_plus '
-        '--cov-report term-missing '
-        '--cov-report term:skip-covered '
     )
