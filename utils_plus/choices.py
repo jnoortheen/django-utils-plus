@@ -36,7 +36,6 @@ class IntChoicesEnum(enum.IntEnum):
             yield (attr.value, attr.name.replace('_', ' ').title())
 
 
-@total_ordering
 class ChoicesEnum(enum.Enum):
     """
         Enumerator class for use with the django ORM CharField choices.
@@ -96,11 +95,6 @@ class ChoicesEnum(enum.Enum):
             return self
         return members[index]
 
-    def __lt__(self, other):
-        if self.__class__ is other.__class__:
-            return self.member_index < other.member_index
-        return NotImplemented
-
     @classmethod
     def max_length(cls):
         return max((len(x.name) for x in cls))
@@ -109,3 +103,11 @@ class ChoicesEnum(enum.Enum):
     def choices(cls):
         for attr in cls:
             yield (attr.name, attr.value)
+
+
+@total_ordering
+class ChoicesOrderEnum(ChoicesEnum):
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.member_index < other.member_index
+        return NotImplemented
