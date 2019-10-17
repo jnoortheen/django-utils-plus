@@ -13,3 +13,5 @@ dist/
 .coverage
 .fab_tasks~
 .pytest_cache/
+
+.todos.md
