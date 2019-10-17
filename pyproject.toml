@@ -5,6 +5,11 @@ description = "A reusable Django app with small set of utilities for urls, views
 authors = ["jnoortheen <jnoortheen@gmail.com>"]
 license = "MIT"
 
+packages = [
+    { include="utils_plus"},
+]
+
+
 [tool.poetry.dependencies]
 python = ">= 3.6"
 django = "^2.1"
