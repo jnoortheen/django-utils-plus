@@ -17,7 +17,7 @@ def release(c):
     # repository: https://upload.pypi.org/legacy/
     # username: jnoortheen
     # password: pwd
-    c.run('python setup.py sdist upload')
+    c.run('poetry publish --build')
 
 
 @invoke.task
