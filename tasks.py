@@ -13,10 +13,6 @@ def release(c):
     # index-servers =
     #  pypi
 
-    # [pypi]
-    # repository: https://upload.pypi.org/legacy/
-    # username: jnoortheen
-    # password: pwd
     c.run('poetry publish --build')
 
 
