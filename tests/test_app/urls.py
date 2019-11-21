@@ -1,4 +1,4 @@
-from utils_plus.router import Url as u
+from utils_plus.router import u
 from utils_plus.views import return_path_view
 from .views import CreateUpdateAuthorView
 
@@ -6,5 +6,3 @@ from .views import CreateUpdateAuthorView
 #     # u.slug(return_path_view, 'blog-slug'),
 #     # u.incl(CreateUpdateAuthorView.urls(), namespace='autor', prefix='author_profile'),
 # ]
-
-urlpatterns = []
