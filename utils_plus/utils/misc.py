@@ -1,5 +1,8 @@
 import os
 
+from django.apps import apps
+from django.urls import reverse_lazy
+
 IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR')
 
 
@@ -22,6 +25,7 @@ def get_ip_address(request):
         addr = request.META.get(header)
         if addr:
             return addr.split(',')[0].strip()
+    return None
 
 
 def reverse_url(urlname, *args, **kwargs):
@@ -37,7 +41,6 @@ def reverse_url(urlname, *args, **kwargs):
     >>> reverse_url('blog-slug', 'slug-title')
     '/blog/slug-title/'
     """
-    from django.urls import reverse_lazy
     return reverse_lazy(urlname, args=args, kwargs=kwargs)
 
 
@@ -53,8 +56,6 @@ def app_fixtures(*app_names):
     >>> set(app_fixtures('test_app')) == {'fixture_2.json', 'fixture_1.json'}
     True
     """
-    from django.apps import apps
-    import os
 
     files = []
     for app_name in app_names:

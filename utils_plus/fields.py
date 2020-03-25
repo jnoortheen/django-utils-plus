@@ -30,7 +30,8 @@ class ChoicesEnumField(models.CharField):
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
         args.insert(0, self.enum_class)
-        if 'choices' in kwargs: del kwargs['choices']
+        if 'choices' in kwargs:
+            del kwargs['choices']
         return name, path, args, kwargs
 
     def to_python(self, value):
@@ -43,7 +44,7 @@ class ChoicesEnumField(models.CharField):
         data = self.to_python(value)
         return data
 
-    def from_db_value(self, value, expression, connection):
+    def from_db_value(self, value, _, __):
         return value if value is None else self.enum_class[value]
 
     def get_prep_value(self, value):

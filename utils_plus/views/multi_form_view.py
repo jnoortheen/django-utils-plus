@@ -17,8 +17,10 @@ class MultiFormMixin(ContextMixin):
         return self.form_classes
 
     def get_forms(self, form_classes, form_names=None, bind_all=False):
-        return dict([(key, self._create_form(key, klass, (form_names and key in form_names) or bind_all)) \
-                     for key, klass in form_classes.items()])
+        return {
+            key: self._create_form(key, klass, (form_names and key in form_names) or bind_all)
+            for key, klass in form_classes.items()
+        }
 
     def get_form_kwargs(self, form_name, bind_form=False):
         kwargs = {}
@@ -34,8 +36,7 @@ class MultiFormMixin(ContextMixin):
         form_valid_method = '%s_form_valid' % form_name
         if hasattr(self, form_valid_method):
             return getattr(self, form_valid_method)(forms[form_name])
-        else:
-            return HttpResponseRedirect(self.get_success_url(form_name))
+        return HttpResponseRedirect(self.get_success_url(form_name))
 
     def forms_invalid(self, forms):
         return self.render_to_response(self.get_context_data(forms=forms))
@@ -44,8 +45,7 @@ class MultiFormMixin(ContextMixin):
         initial_method = 'get_%s_initial' % form_name
         if hasattr(self, initial_method):
             return getattr(self, initial_method)()
-        else:
-            return self.initial.copy()
+        return self.initial.copy()
 
     def get_prefix(self, form_name):
         return self.prefixes.get(form_name, self.prefix)
@@ -69,7 +69,7 @@ class MultiFormMixin(ContextMixin):
         return {}
 
 
-class ProcessMultipleFormsView(ProcessFormView):
+class ProcessMultipleFormsViewMixin(ProcessFormView):
 
     def get(self, request, *args, **kwargs):
         form_classes = self.get_form_classes()
@@ -81,10 +81,9 @@ class ProcessMultipleFormsView(ProcessFormView):
         form_name = request.POST.get('action')
         if self._individual_exists(form_name):
             return self._process_individual_form(form_name, form_classes)
-        elif self._group_exists(form_name):
+        if self._group_exists(form_name):
             return self._process_grouped_forms(form_name, form_classes)
-        else:
-            return self._process_all_forms(form_classes)
+        return self._process_all_forms(form_classes)
 
     def _individual_exists(self, form_name):
         return form_name in self.form_classes
@@ -97,18 +96,18 @@ class ProcessMultipleFormsView(ProcessFormView):
         form = forms.get(form_name)
         if not form:
             return HttpResponseForbidden()
-        elif form.is_valid():
+        if form.is_valid():
             return self.forms_valid(forms, form_name)
-        else:
-            return self.forms_invalid(forms)
+
+        return self.forms_invalid(forms)
 
     def _process_grouped_forms(self, group_name, form_classes):
         form_names = self.grouped_forms[group_name]
         forms = self.get_forms(form_classes, form_names)
         if all([forms.get(form_name).is_valid() for form_name in form_names.values()]):
             return self.forms_valid(forms)
-        else:
-            return self.forms_invalid(forms)
+
+        return self.forms_invalid(forms)
 
     def _process_all_forms(self, form_classes):
         forms = self.get_forms(form_classes, None, True)
@@ -116,11 +115,10 @@ class ProcessMultipleFormsView(ProcessFormView):
             for form_name in forms:
                 self.forms_valid(forms, form_name)
             return self.forms_valid(forms, None)
-        else:
-            return self.forms_invalid(forms)
+        return self.forms_invalid(forms)
 
 
-class BaseMultipleFormsView(MultiFormMixin, ProcessMultipleFormsView):
+class BaseMultipleFormsView(MultiFormMixin, ProcessMultipleFormsViewMixin):
     """
     A base view for displaying several forms.
     """

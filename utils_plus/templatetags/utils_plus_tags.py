@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
+from utils_plus.utils.html import script_tag, link_css_tag
 
 from ..utils import get_node_modules_dir, get_npm_pkg_path
 
@@ -115,7 +116,6 @@ def jsdelivr_combine_js(*paths, **attributes):
         **attributes: script tag's attrbute
 
     """
-    from ..utils.html import script_tag
     script_template = script_tag(
         **attributes,
         src='{}',  # URL placeholder
@@ -133,7 +133,6 @@ def jsdelivr_combine_css(*paths, **attributes):
         **attributes: script tag's attrbute
 
     """
-    from ..utils.html import link_css_tag
     tmpl = link_css_tag(
         **attributes,
         href='{}',  # URL placeholder

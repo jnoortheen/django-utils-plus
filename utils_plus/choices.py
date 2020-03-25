@@ -1,3 +1,4 @@
+# pylint: disable = W0212
 import enum
 from functools import total_ordering
 

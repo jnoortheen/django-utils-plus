@@ -1,6 +1,7 @@
+import re
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-import re
 
 LOGIN_REQ_URLS = []
 if hasattr(settings, 'LOGIN_REQUIRED_URLS'):
@@ -17,6 +18,7 @@ def login_required_middleware(get_response):
     Returns:
 
     """
+
     def middleware(request):
         if any(m.match(request.path) for m in LOGIN_REQ_URLS):
             return login_required(get_response)(request)

@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from unittest.mock import Mock
-
-from django.conf.urls import url
-
-# Create your views here.
-from django.views import View
+"""
+Usage: see tests/test_mixins.py
+"""
+# pylint: disable=R0201
+from django.urls import path
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
@@ -18,15 +14,6 @@ class ContextMixinPlus(ContextMixin):
     """
     This mixin will add all url parameters to context and updates context with extra_context defined in inherited
     classes
-
-    Usage:
-
-    >>> class GenricView(ContextMixinPlus, View):
-    ...     three = 0;four = 0;
-    ...     kwargs = {'one':1, 'two':2}
-    >>> view = GenricView()
-    >>> view.get_context_data(six=6, five=5).keys()
-    dict_keys(['six', 'five', 'view', 'one', 'two'])
     """
     extra_context = {}  # This can be overridden by subclasses; it must be returning a dict
     kwargs = {}
@@ -40,18 +27,20 @@ class ContextMixinPlus(ContextMixin):
         return {}
 
     def get_context_data(self, **kwargs):
-        c = super(ContextMixinPlus, self).get_context_data(**kwargs)  # type: dict
+        ctx = super(ContextMixinPlus, self).get_context_data(**kwargs)  # type: dict
         for k in self.kwargs:
-            c[k] = self.kwargs[k]
-        c.update(self.extra_context)
-        c.update(self.get_extra_context())
-        return c
+            ctx[k] = self.kwargs[k]
+        ctx.update(self.extra_context)
+        ctx.update(self.get_extra_context())
+        return ctx
 
 
 class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
-    """This can be used instead both CreateView and EditView. Please see ``urls`` method for more information on routing
-     this view.
+    """This can be used instead both CreateView and EditView.
+     Please see method ``.urls`` method for more information on routing this view.
     """
+    enable_add_another = False
+    pk_type = "int"  # to restrict on the url-path
 
     def _set_object(self, kwargs):
         """
@@ -64,40 +53,10 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
         return self.get_object() if 'pk' in kwargs else None
 
     def get(self, request, *args, **kwargs):
-        """
-
-        Args:
-            request:
-            *args:
-            **kwargs:
-
-        Returns:
-
-        >>> c = CreateUpdateMixin()
-        >>> c.get_object = Mock()
-        >>> ProcessFormView.get = Mock()
-        >>> obj = c.get(request='', pk=1)
-        >>> c.get_object.assert_called_once()
-        """
         self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        """
-
-        Args:
-            request:
-            *args:
-            **kwargs:
-
-        Returns:
-
-        >>> c = CreateUpdateMixin()
-        >>> c.get_object = Mock()
-        >>> ProcessFormView.post = Mock()
-        >>> obj = c.post(request='', pk=1)
-        >>> c.get_object.assert_called_once()
-        """
         self.object = self._set_object(kwargs)
         return super(CreateUpdateMixin, self).post(request, *args, **kwargs)
 
@@ -113,17 +72,13 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
                 urlpatterns = [
                     url(r'^xfield/', include(CreateUpdateMixin.urls(), namespace='xfield')),
                 ]
-
-        >>> from django.urls import reverse
-        >>> reverse('author:add')
-        '/blog/author_profile/add/'
-        >>> reverse('author:edit', args=[12])
-        '/blog/author_profile/edit/12/'
         """
-        return [
-            url('^add/$', cls.as_view(**initkwargs), name='add'),
-            url('^edit/(?P<pk>\d+)/$', cls.as_view(**initkwargs), name='edit'),
 
-            # if you use `django-addanother` then this will come in handy
-            url('^edit/(?P<pk>__fk__)/$', cls.as_view(**initkwargs), name='edit-s'),
+        urls = [
+            path('add/', cls.as_view(**initkwargs), name='add'),
+            path(f'edit/<{cls.pk_type}:pk>/', cls.as_view(**initkwargs), name='edit'),
         ]
+        if cls.enable_add_another:
+            urls.append(  # if you use `django-addanother` then this will come in handy
+                path(f'edit/<{cls.pk_type}:pk>/', cls.as_view(**initkwargs), name='edit-s'),
+            )

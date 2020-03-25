@@ -2,6 +2,8 @@ import codecs
 import json
 import os
 
+from django.conf import settings
+
 NODE_PKGS = {}
 
 
@@ -11,7 +13,6 @@ def get_node_modules_dir():
 
 def get_node_pkg_path():
     """return config json file paths"""
-    from django.conf import settings
     root = getattr(settings, 'NODE_PKG_DIR', os.path.abspath(os.path.dirname(__name__)))
     return os.path.join(root, 'package.json'), os.path.join(root, 'package-lock.json')
 
@@ -28,8 +29,8 @@ def normalize_dict(deps):
 def parse_pkgs_dict(json_path):
     pkgs = {}
     if os.path.exists(json_path):
-        with codecs.open(json_path, 'r', 'utf-8') as f:
-            pkg_json = json.loads(f.read())
+        with codecs.open(json_path, 'r', 'utf-8') as reader:
+            pkg_json = json.loads(reader.read())
             pkgs.update(normalize_dict(pkg_json))
     return pkgs
 
@@ -55,4 +56,4 @@ def get_npm_pkg_path(filepath):
     filepath = filepath.lstrip('/')
     pkg_name, filepath = filepath.split('/', 1)
     pkg_version = get_node_pkg_version(pkg_name)
-    return '{pkg_name}@{pkg_version}/{filepath}'.format(**locals())
+    return f'{pkg_name}@{pkg_version}/{filepath}'

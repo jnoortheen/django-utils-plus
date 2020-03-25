@@ -1,5 +1,5 @@
 # Copied from this [gist](https://gist.github.com/freewayz/69d1b8bcb3c225bea57bd70ee1e765f8)
-class CheckDeletableModelMixin(object):
+class CheckDeletableModelMixin:
     def is_deletable(self):
         # get all the related object
         for rel in self._meta.get_fields():

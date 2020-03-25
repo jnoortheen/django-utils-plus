@@ -32,8 +32,8 @@ class FileResponseView(View):
 
     def get(self, request):
         content_type, encoding = mimetypes.guess_type(self.file_path)
-        f = open(self.file_path, "rb")
-        response = FileResponse(f, content_type=content_type)
+        file = open(self.file_path, "rb")
+        response = FileResponse(file, content_type=content_type)
         if encoding:
             response["Content-Encoding"] = encoding
         return response
