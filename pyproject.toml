@@ -45,6 +45,7 @@ black = {version = "^18.3-alpha.0", allow-prereleases = true}
 sniffer = "^0.4.1"
 pylint = "^2.4.4"
 pyinotify = "^0.9.6"
+pylint-django = "^2.0.14"
 
 [build-system]
 requires = ["poetry>=0.12"]
