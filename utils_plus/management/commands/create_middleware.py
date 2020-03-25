@@ -3,6 +3,8 @@ import os
 from django import template
 from django.core.management.base import AppCommand
 
+from utils_plus.utils.misc import read_if_exists
+
 CLASS_TMPL = """\
 
 def {{name}}(get_response):
@@ -23,16 +25,14 @@ class Command(AppCommand):
 
     def handle_app_config(self, app_config, **options):
         file = os.path.join(app_config.path, 'middleware.py')
-        content = ""
+        content = read_if_exists(file)
         mware_name = "{}_middleware".format(options['name'])
 
-        if os.path.exists(file):
-            with open(file) as f: content = f.read()
-
         if mware_name not in content:
-            t = template.Template(CLASS_TMPL)
-            content += t.render(template.Context(dict(name=mware_name)))
+            tmpl = template.Template(CLASS_TMPL)
+            content += tmpl.render(template.Context(dict(name=mware_name)))
 
         # finaly write file contents
         if content:
-            with open(file, 'w') as f: f.write(content)
+            with open(file, 'w') as writer:
+                writer.write(content)

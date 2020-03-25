@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandParser
 class Command(BaseCommand):
     help = "Test sending mail from django."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser):
         """
 
         Args:

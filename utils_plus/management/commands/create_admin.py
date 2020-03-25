@@ -1,8 +1,11 @@
 import os
+import sys
 
 from django import template
 from django.apps import AppConfig
 from django.core.management.base import AppCommand, CommandParser
+
+from utils_plus.utils.misc import read_if_exists
 
 RES_IMPORT_TEMPLATE = """\
 from import_export.resources import ModelResource
@@ -41,7 +44,7 @@ class {{ model_name }}Admin(admin.ModelAdmin):
 class Command(AppCommand):
     help = "A handy command to create ModelAdmin classes (with import/export resource classes) for Models."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser):
         """
 
         Args:
@@ -56,7 +59,7 @@ class Command(AppCommand):
         parser.add_argument('-r', dest='resource', default=True, type=bool,
                             help='Create resource classes too')
 
-    def handle_app_config(self, app_config, **options):
+    def handle_app_config(self, app_config: AppConfig, **options):
         """
 
         Args:
@@ -66,13 +69,7 @@ class Command(AppCommand):
         Returns:
 
         """
-        is_resource_pkg_installed = False
-        try:
-            import import_export.resources
-            is_resource_pkg_installed = True
-        except:
-            pass
-
+        is_resource_pkg_installed = "import_export" in sys.modules
         resource_file = os.path.join(app_config.path, 'resources.py')
         admin_file = os.path.join(app_config.path, 'admin.py')
         res_file_content = ""
@@ -86,47 +83,49 @@ class Command(AppCommand):
 
             # check file imports
             if not res_file_content:
-                if os.path.exists(resource_file):
-                    with open(resource_file) as f: res_file_content = f.read()
+                res_file_content = read_if_exists(resource_file)
+                # add imports if this is the first time creating this file
+                tmpl = template.Template(RES_IMPORT_TEMPLATE)
+                res_file_content += tmpl.render(template.Context(dict(app_name=app_config.name)))
+
             if not admin_file_content:
-                if os.path.exists(admin_file):
-                    with open(admin_file) as f: admin_file_content = f.read()
+                admin_file_content = read_if_exists(admin_file)
                 if ADMIN_IMPORTS not in admin_file_content:
                     admin_file_content = ADMIN_IMPORTS + admin_file_content
-
-            # add imports if this is the first time creating this file
-            if not res_file_content:
-                t = template.Template(RES_IMPORT_TEMPLATE)
-                res_file_content += t.render(template.Context(dict(app_name=app_config.name)))
 
             # add class for a model if it doesn't exist already
             model_class = model.__module__ + '.' + model.__name__
             if model_class not in res_file_content:
-                t = template.Template(RES_CLASS_TEMPLATE)
-                res_file_content += t.render(
-                    template.Context(
-                        dict(
-                            model_name=model.__name__,
-                            model_class=model_class,
-                        )
-                    )
-                )
+                res_file_content += get_resource_cls(model, model_class)
             if model.__name__ not in admin_file_content:
-                tmpl = ADMIN_CLASS_WITH_RES_TEMPLATE if has_resource_class else ADMIN_CLASS_TEMPLATE
-                t = template.Template(tmpl)
-                admin_file_content += t.render(
-                    template.Context(
-                        dict(
-                            model_name=model.__name__
-                        )
-                    )
-                )
+                admin_file_content += get_admin_cls(has_resource_class, model)
 
         # finaly write file contents
-
         if has_resource_class:
-            with open(resource_file, 'w') as f:
-                f.write(res_file_content)
+            with open(resource_file, 'w') as writer:
+                writer.write(res_file_content)
+        with open(admin_file, 'w') as writer:
+            writer.write(admin_file_content)
 
-        with open(admin_file, 'w') as f:
-            f.write(admin_file_content)
+
+def get_resource_cls(model, model_class):
+    tmpl = template.Template(RES_CLASS_TEMPLATE)
+    return tmpl.render(
+        template.Context(
+            dict(
+                model_name=model.__name__,
+                model_class=model_class,
+            )
+        )
+    )
+
+
+def get_admin_cls(has_resource_class: bool, model):
+    tmpl = template.Template(ADMIN_CLASS_WITH_RES_TEMPLATE if has_resource_class else ADMIN_CLASS_TEMPLATE)
+    return tmpl.render(
+        template.Context(
+            dict(
+                model_name=model.__name__
+            )
+        )
+    )

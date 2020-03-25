@@ -1,3 +1,5 @@
+import os
+
 IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR')
 
 
@@ -61,3 +63,11 @@ def app_fixtures(*app_names):
         if os.path.exists(path):
             files.extend([i for i in os.listdir(path) if i.endswith('.json')])
     return files
+
+
+def read_if_exists(file):
+    content = ""
+    if os.path.exists(file):
+        with open(file) as reader:
+            content = reader.read()
+    return content
