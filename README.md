@@ -1,6 +1,13 @@
 # utils-plus 
 A simple reusable Django app with various mixins and utility functions.
 
+-------
+
+[![PyPi Version](https://img.shields.io/pypi/v/pconf.svg?style=flat)](https://pypi.python.org/pypi/pconf)
+[![Python Version](https://img.shields.io/pypi/pyversions/returns.svg)](https://pypi.org/project/returns/)
+
+-------
+
 # Installation
 install the package using the below command
 

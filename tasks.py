@@ -3,9 +3,10 @@ import invoke
 
 @invoke.task
 def release(c):
-    import utils_plus
+    cversion: invoke.Result = c.run("poetry version")
+    version: str = cversion.stdout.replace("django-utils-plus", "").strip()
     c.run('git push')
-    c.run('git tag {}'.format(utils_plus.__version__))
+    c.run('git tag v{}'.format(version))
     c.run('git push --tags')
 
     # dont forget to have this file
