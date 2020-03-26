@@ -1,73 +1,103 @@
-from __future__ import with_statement
-
-from dataclasses import dataclass
+# pylint: disable=C0103,R0201
 from typing import Tuple, Union
 
-from django.conf.urls import include
-from django.urls.resolvers import URLPattern, URLResolver
-from django.conf import settings
-from django.urls import path, re_path
-
-TRAILING_SLASH_SETTING_NAME = 'URL_GROUP_TRAIL_SLASH'
-
-TRAIL_SLASH = getattr(settings, TRAILING_SLASH_SETTING_NAME, True)
+from django.urls import re_path, path
 
 
-class UrlGroup:
-    def __init__(self, route: str):
-        self.route = route
-
-    def __getitem__(self, item: Tuple[Union[URLResolver, URLPattern]]):
-        for p in item:
-            print(p)
-
-
-class _UrlBuilder:
+class url:
     """
     An elegant and DRY way to define urlpatterns with so many nested levels and syntax sugars.
-    It is just a wrapper behind the standard url(), include() methods.
+    It is just a wrapper behind the standard re_path/path functions.
 
     Usage:
 
     ### urls.py ###
 
-    urlpatterns = [
-        u('editor')[
-            u.int('doc_pk')[
-                u('edit', DocEditorView.as_view(), 'edit-doc'),
-                u('export', DocExporterView.as_view(), 'export-doc'),
+    urlpatterns = list(
+        url('editor')[
+            url.int('doc_pk')[
+                url('edit', DocEditorView.as_view(), 'edit-doc'),
+                url('export', DocExporterView.as_view(), 'export-doc'),
             ]
-        ],
-        u('docs', Docs.as_view(), 'student-documents'),
-        u('publish', DeleteOrPublistDocument.as_view(), 'publish_document', action='publish'),
-        u('delete', DeleteOrPublistDocument.as_view(), 'delete_document'),
-    ]
+        ]
+        + url('docs', Docs.as_view(), 'student-documents')
+        + url('publish', DeleteOrPublistDocument.as_view(), 'publish_document', action='publish')
+        + url('delete', DeleteOrPublistDocument.as_view(), 'delete_document')
+    )
 
     see tests/test_router.py for more use cases
     """
 
-    def __call__(self, route: str, view: callable = None, url_name: str = None, **kwargs):
-        if view:
-            return path(route, view, url_name, kwargs)
+    def __init__(self, prefix: str, view=None, name=None, is_regex=False, **kwargs):
+        self.prefix = prefix
+        self.view = view
+        self.name = name
+        self.kwargs = kwargs
+        self.is_regex = is_regex  # regex path
+        self.others = ()
+
+    def __repr__(self):
+        return f"url`{self.prefix}`" + (f".({len(self.others)})" if self.others else "")
+
+    def _prefix(self, other: "url"):
+        slash = "" if self.prefix.endswith("/") or other.prefix.startswith("/") else "/"
+        other.prefix = f"{self.prefix}{slash}{other.prefix}"
+        return other
+
+    def __getitem__(self, uobjs: Union['url', Tuple['url', ...]]) -> 'url':
+        if not isinstance(uobjs, tuple):
+            uobjs = (uobjs,)
+        for obj in uobjs:
+            self.others += (self._prefix(obj),) + tuple(self._prefix(innu) for innu in obj.others)
+        return self
+
+    def __add__(self, other: "url") -> 'url':
+        self.others += (other,)
+        return self
+
+    def _path(self):
+        if self.is_regex:
+            func = re_path
         else:
-            return UrlGroup(route)
+            func = path
+        return func(self.prefix, self.view, kwargs=self.kwargs, name=self.name)
 
-    def re(self, var_name, regex, view=None, url_name=None, **kwargs):
-        return re_path(r'(?P<{}>{})'.format(var_name, regex), view, url_name, **kwargs)
+    def __iter__(self):
+        uobjs = (self,) + self.others
+        for obj in uobjs:
+            if obj.view:
+                yield obj._path()
 
-    def var(self, var_name, view=None, url_name=None, dtype=None, **kwargs):
+    @classmethod
+    def re(cls, var_name, regex, view=None, name=None, **kwargs):
+        return cls(rf'(?P<{var_name}>{regex})', view, name=name, **kwargs)
+
+    @classmethod
+    def var(cls, var_name, view=None, name=None, dtype=None, **kwargs):
         route = f"{dtype}:{var_name}" if dtype else str(var_name)
-        return self.__call__(f"<{route}>", view, url_name, **kwargs)
+        return cls(f"<{route}>", view, name, **kwargs)
 
-    def int(self, var_name, view=None, url_name=None, **kwargs):
-        return self.var(var_name, view, url_name, dtype="int", **kwargs)
+    # int = partialmethod(var, dtype="int")
 
-    def pk(self, view=None, url_name=None, dtype="int", **kwargs):
-        return self.var('pk', view, url_name, dtype=dtype, **kwargs)
+    @classmethod
+    def int(cls, var_name, view=None, name=None, **kwargs):
+        return cls.var(var_name, view, name, dtype="int", **kwargs)
 
-    def slug(self, var_name, view=None, url_name=None, **kwargs):
-        return self.var(var_name, view, url_name, dtype='slug', **kwargs)
+    @classmethod
+    def slug(cls, var_name, view=None, name=None, **kwargs):
+        return cls.var(var_name, view, name, dtype='slug', **kwargs)
+
+    @classmethod
+    def uuid(cls, var_name, view=None, name=None, **kwargs):
+        return cls.var(var_name, view, name, dtype="uuid", **kwargs)
+
+    @classmethod
+    def path(cls, var_name, view=None, name=None, **kwargs):
+        return cls.var(var_name, view, name, dtype="path", **kwargs)
+
+    @classmethod
+    def pk(cls, view=None, name=None, dtype="int", **kwargs):
+        return cls.var('pk', view, name, dtype=dtype, **kwargs)
 
 
-u = _UrlBuilder()
-__all__ = ['u', ]
+__all__ = ['url', ]
