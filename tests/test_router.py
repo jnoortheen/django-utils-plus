@@ -48,14 +48,22 @@ def test_variable_regex():
 
 
 def test_same_level_urls():
-    g = url("home", view)[url.pk(view)] + url("about", view)[url.pk(view)] + url("contact", view)
-
-    assert str_iter(g) == [
-        "<URLPattern 'home/'>",
-        "<URLPattern 'home/<int:pk>/'>",
-        "<URLPattern 'about/'>",
-        "<URLPattern 'contact/'>",
-    ]
+    g = url("home", view)[
+            url.pk(view)
+        ] + url("about", view)[
+            url.pk(view)[
+                url("pdf", view)
+            ]
+        ] + url("contact", view)[
+            url.pk(view)
+        ]
+    assert str_iter(g) == ["<URLPattern 'home/'>",
+                           "<URLPattern 'home/<int:pk>/'>",
+                           "<URLPattern 'about/'>",
+                           "<URLPattern 'about/<int:pk>/'>",
+                           "<URLPattern 'about/<int:pk>/pdf/'>",
+                           "<URLPattern 'contact/'>",
+                           "<URLPattern 'contact/<int:pk>/'>"]
 
 
 def test_paths_without_views():

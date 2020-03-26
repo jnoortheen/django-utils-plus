@@ -57,7 +57,7 @@ class url:
         return self
 
     def __add__(self, other: "url") -> 'url':
-        self.others += (other,)
+        self.others += (other,) + other.others
         return self
 
     def _path(self):
