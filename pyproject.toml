@@ -40,7 +40,6 @@ rope = "*"
 pytest-cov = "*"
 invoke = "*"
 django_dynamic_fixture = "*"
-pytest-sugar = "*"
 black = {version = "^18.3-alpha.0", allow-prereleases = true}
 sniffer = "^0.4.1"
 pylint = "^2.4.4"

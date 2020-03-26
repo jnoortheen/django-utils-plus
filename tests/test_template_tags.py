@@ -6,7 +6,7 @@ def test_jsdelivr_combine_js(settings):
     assert jsdelivr_combine_js(
         'bootstrap/dist/js/bootstrap.min.js',
         'jquery/dist/jquery.min.js'
-    ) == """<script src="//cdn.jsdelivr.net/combine//npm/bootstrap@3.3.7/dist/js/bootstrap.min.js,npm/jquery@3.2.1/dist/jquery.min.js"></script>"""
+    ) == """<script src="//cdn.jsdelivr.net/combine//npm/bootstrap@3.4.1/dist/js/bootstrap.min.js,npm/jquery@3.4.0/dist/jquery.min.js"></script>"""
 
 
 def test_jsdelivr_combine_css(settings):
@@ -14,7 +14,7 @@ def test_jsdelivr_combine_css(settings):
     assert jsdelivr_combine_css(
         'bootstrap/dist/css/bootstrap.min.css',
         'malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css'
-    ) == """<link href="//cdn.jsdelivr.net/combine//npm/bootstrap@3.3.7/dist/css/bootstrap.min.css,npm/malihu-custom-scrollbar-plugin@3.1.5/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>"""
+    ) == """<link href="//cdn.jsdelivr.net/combine//npm/bootstrap@3.4.1/dist/css/bootstrap.min.css,npm/malihu-custom-scrollbar-plugin@3.1.5/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>"""
 
 
 def test_jsdelivr_combine_js_debug_mode(settings):
@@ -28,7 +28,7 @@ def test_jsdelivr_combine_js_debug_mode(settings):
 
 def test_unpkg_tag(settings):
     # when DEBUG is false it returns unpkg url
-    assert unpkg('bootstrap/dist/js/bootstrap.min.js') == '//unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js'
+    assert unpkg('bootstrap/dist/js/bootstrap.min.js') == '//unpkg.com/bootstrap@3.4.1/dist/js/bootstrap.min.js'
 
 
 def test_unpkg_tag_debug_mode(settings):
