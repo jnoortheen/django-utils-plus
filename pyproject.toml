@@ -34,12 +34,12 @@ python = ">= 3.6"
 django = ">=2.2"
 
 [tool.poetry.dev-dependencies]
-pytest-django = "^3.*"
-pytest-pythonpath = "^0.7.3"
+pytest-django = {version="^3.*", optional=true}
+pytest-pythonpath = {version="^0.7.3", optional=true}
+pytest-cov = {version="*", optional=true}
+django_dynamic_fixture = {version="*", optional=true}
 rope = "*"
-pytest-cov = "*"
 invoke = "*"
-django_dynamic_fixture = "*"
 black = {version = "^18.3-alpha.0", allow-prereleases = true}
 sniffer = "^0.4.1"
 pylint = "^2.4.4"
@@ -49,6 +49,9 @@ tox = "^3.14.6"
 django-stubs = "^1.5.0"
 mypy = "^0.770"
 
+[tool.poetry.extras]
+test = ["pytest-django", "pytest-pythonpath", "django_dynamic_fixture"]
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
