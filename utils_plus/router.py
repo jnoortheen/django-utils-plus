@@ -1,7 +1,10 @@
 # pylint: disable=C0103,R0201
-from typing import Tuple, Union
+from typing import Tuple, Union, Callable, Optional, Any
 
 from django.urls import re_path, path
+
+# in case of include we get a tuple
+ViewType = Optional[Union[Callable, Tuple[Any, Any, Any]]]
 
 
 class url:
@@ -29,7 +32,8 @@ class url:
     """
 
     def __init__(self, prefix: str, view=None, name=None, is_regex=False, **kwargs):
-        self.prefix = prefix
+        slash = "" if (not prefix or prefix.endswith("/")) else "/"
+        self.prefix = f"{prefix}{slash}"
         self.view = view
         self.name = name
         self.kwargs = kwargs
@@ -40,8 +44,9 @@ class url:
         return f"url`{self.prefix}`" + (f".({len(self.others)})" if self.others else "")
 
     def _prefix(self, other: "url"):
-        slash = "" if self.prefix.endswith("/") or other.prefix.startswith("/") else "/"
-        other.prefix = f"{self.prefix}{slash}{other.prefix}"
+        slash = "" if not self.prefix or self.prefix.endswith("/") or other.prefix.startswith("/") else "/"
+        end_slash = "" if not other.prefix or other.prefix.endswith("/") else "/"
+        other.prefix = f"{self.prefix}{slash}{other.prefix}{end_slash}"
         return other
 
     def __getitem__(self, uobjs: Union['url', Tuple['url', ...]]) -> 'url':
@@ -69,26 +74,40 @@ class url:
                 yield obj._path()
 
     @classmethod
-    def re(cls, var_name, regex, view=None, name=None, **kwargs):
-        return cls(rf'(?P<{var_name}>{regex})', view, name=name, **kwargs)
+    def re(cls, var_name: str, regex: str, view: Optional[Callable] = None, name=None, **kwargs):
+        """implements urls.re_path"""
+        return cls(rf'(?P<{var_name}>{regex})', view, name=name, is_regex=True, **kwargs)
 
     @classmethod
     def var(cls, var_name, view=None, name=None, dtype=None, **kwargs):
+        """Implements having url-arguments. dtype is the casting argument.
+        the default cast-type is str as Django."""
         route = f"{dtype}:{var_name}" if dtype else str(var_name)
         return cls(f"<{route}>", view, name, **kwargs)
 
-    # int = partialmethod(var, dtype="int")
-
     @classmethod
     def int(cls, var_name, view=None, name=None, **kwargs):
+        """Implements
+            ..
+                path("<int:var_name>", view, )
+        """
         return cls.var(var_name, view, name, dtype="int", **kwargs)
 
     @classmethod
-    def slug(cls, var_name, view=None, name=None, **kwargs):
-        return cls.var(var_name, view, name, dtype='slug', **kwargs)
+    def slug(cls, view=None, name=None, var_name="slug", **kwargs):
+        """Implements
+            ..
+                path("<slug:slug>", view, )
+        """
+        return cls.var(var_name=var_name, view=view, name=name, dtype='slug', **kwargs)
 
     @classmethod
-    def uuid(cls, var_name, view=None, name=None, **kwargs):
+    def uuid(cls, view=None, name=None, var_name="uuid", **kwargs):
+        """Implements
+            ..
+                path("<uuid:uuid>", view, )
+        """
+
         return cls.var(var_name, view, name, dtype="uuid", **kwargs)
 
     @classmethod
@@ -97,7 +116,7 @@ class url:
 
     @classmethod
     def pk(cls, view=None, name=None, dtype="int", **kwargs):
-        return cls.var('pk', view, name, dtype=dtype, **kwargs)
+        return cls.var('pk', view=view, name=name, dtype=dtype, **kwargs)
 
 
 __all__ = ['url', ]
