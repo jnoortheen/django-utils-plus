@@ -21,8 +21,9 @@ class Options:
     rerun_args = None
 
     targets = [
-        (("pylint", "utils_plus"), None, True),
+        (("inv", "lint"), "Linting", True),
         (("pytest",), "Unit Tests", True),
+        (("inv", "test"), "Tests with coverage", True),
         (("tox",), "Compatibility Tests", True),
     ]
 

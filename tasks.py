@@ -23,3 +23,9 @@ def test(c):
         'pytest '
         '--cov utils_plus '
     )
+
+
+@invoke.task
+def lint(c):
+    c.run("mypy utils_plus")
+    c.run("pylint utils_plus")
