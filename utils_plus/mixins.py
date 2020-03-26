@@ -2,10 +2,12 @@
 Usage: see tests/test_mixins.py
 """
 # pylint: disable=R0201
-from django.urls import path
+
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
+
+from utils_plus.router import url
 
 __all__ = ['ContextMixinPlus', 'CreateUpdateMixin', ]
 
@@ -39,7 +41,6 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
     """This can be used instead both CreateView and EditView.
      Please see method ``.urls`` method for more information on routing this view.
     """
-    enable_add_another = False
     pk_type = "int"  # to restrict on the url-path
 
     def _set_object(self, kwargs):
@@ -61,24 +62,31 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
         return super(CreateUpdateMixin, self).post(request, *args, **kwargs)
 
     @classmethod
-    def urls(cls, **initkwargs):
+    def urls(cls, name_prefix: str, **initkwargs) -> url:
         """
             since this class works like a ViewSet, it is a good idea to create a urls method which would add routes for
             create/update of a model object. This add two routes for the given namespace.
         Returns:
             list: url patterns
         Usage:
-            in urls.py see tests/test_app
-                urlpatterns = [
-                    url(r'^xfield/', include(CreateUpdateMixin.urls(), namespace='xfield')),
-                ]
-        """
+            # in urls.py
+            urls = url("author")[
+                CreateUpdateAuthorView.urls(name_prefix='author'), # helper to use with url objects
+            ],
+            urlpatterns = list(urls)
 
-        urls = [
-            path('add/', cls.as_view(**initkwargs), name='add'),
-            path(f'edit/<{cls.pk_type}:pk>/', cls.as_view(**initkwargs), name='edit'),
-        ]
-        if cls.enable_add_another:
-            urls.append(  # if you use `django-addanother` then this will come in handy
-                path(f'edit/<{cls.pk_type}:pk>/', cls.as_view(**initkwargs), name='edit-s'),
-            )
+            # it is equivalent to
+            urlpatterns = [
+                path("author/add", CreateUpdateAuthorView.as_view(), name="author-add"),
+                path("author/<int:pk>/edit", CreateUpdateAuthorView.as_view(), name="author-edit"),
+            ]
+
+        See Also
+            `tests/test_app/urls.py`
+        """
+        return (
+                url('add', view=cls.as_view(**initkwargs), name=f'{name_prefix}-add') +
+                url.pk()[
+                    url('edit', view=cls.as_view(**initkwargs), name=f'{name_prefix}-edit', dtype=cls.pk_type)
+                ]
+        )
