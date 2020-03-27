@@ -1,10 +1,11 @@
 # pylint: disable=C0103,R0201
 from typing import Tuple, Union, Callable, Optional, Any
 
-from django.urls import re_path, path
+from django.http import HttpResponse
+from django.urls import re_path, path, URLPattern, URLResolver
 
 # in case of include we get a tuple
-ViewType = Optional[Union[Callable, Tuple[Any, Any, Any]]]
+ViewType = Optional[Union[Callable[..., HttpResponse], Tuple[Any, Any, Any]]]
 
 
 class url:
@@ -31,14 +32,14 @@ class url:
     see tests/test_router.py for more use cases
     """
 
-    def __init__(self, prefix: str, view=None, name=None, is_regex=False, **kwargs):
+    def __init__(self, prefix: str, view: ViewType = None, name=None, is_regex=False, **kwargs):
         slash = "" if (not prefix or prefix.endswith("/")) else "/"
         self.prefix = f"{prefix}{slash}"
         self.view = view
         self.name = name
         self.kwargs = kwargs
         self.is_regex = is_regex  # regex path
-        self.others = ()
+        self.others: Tuple["url", ...] = ()
 
     def __repr__(self):
         return f"url`{self.prefix}`" + (f".({len(self.others)})" if self.others else "")
@@ -60,7 +61,7 @@ class url:
         self.others += (other,) + other.others
         return self
 
-    def _path(self):
+    def _path(self) -> Union[URLPattern, URLResolver]:
         if self.is_regex:
             func = re_path
         else:
@@ -74,19 +75,19 @@ class url:
                 yield obj._path()
 
     @classmethod
-    def re(cls, var_name: str, regex: str, view: Optional[Callable] = None, name=None, **kwargs):
+    def re(cls, var_name: str, regex: str, view: ViewType = None, name=None, **kwargs) -> "url":
         """implements urls.re_path"""
         return cls(rf'(?P<{var_name}>{regex})', view, name=name, is_regex=True, **kwargs)
 
     @classmethod
-    def var(cls, var_name, view=None, name=None, dtype=None, **kwargs):
+    def var(cls, var_name, view=None, name=None, dtype=None, **kwargs) -> "url":
         """Implements having url-arguments. dtype is the casting argument.
         the default cast-type is str as Django."""
         route = f"{dtype}:{var_name}" if dtype else str(var_name)
         return cls(f"<{route}>", view, name, **kwargs)
 
     @classmethod
-    def int(cls, var_name, view=None, name=None, **kwargs):
+    def int(cls, var_name, view=None, name=None, **kwargs) -> "url":
         """Implements
             ..
                 path("<int:var_name>", view, )
@@ -94,7 +95,7 @@ class url:
         return cls.var(var_name, view, name, dtype="int", **kwargs)
 
     @classmethod
-    def slug(cls, view=None, name=None, var_name="slug", **kwargs):
+    def slug(cls, view=None, name=None, var_name="slug", **kwargs) -> "url":
         """Implements
             ..
                 path("<slug:slug>", view, )
@@ -102,7 +103,7 @@ class url:
         return cls.var(var_name=var_name, view=view, name=name, dtype='slug', **kwargs)
 
     @classmethod
-    def uuid(cls, view=None, name=None, var_name="uuid", **kwargs):
+    def uuid(cls, view=None, name=None, var_name="uuid", **kwargs) -> "url":
         """Implements
             ..
                 path("<uuid:uuid>", view, )
@@ -111,11 +112,11 @@ class url:
         return cls.var(var_name, view, name, dtype="uuid", **kwargs)
 
     @classmethod
-    def path(cls, var_name, view=None, name=None, **kwargs):
+    def path(cls, var_name, view=None, name=None, **kwargs) -> "url":
         return cls.var(var_name, view, name, dtype="path", **kwargs)
 
     @classmethod
-    def pk(cls, view=None, name=None, dtype="int", **kwargs):
+    def pk(cls, view=None, name=None, dtype="int", **kwargs) -> "url":
         return cls.var('pk', view=view, name=name, dtype=dtype, **kwargs)
 
 

@@ -24,8 +24,9 @@ class Command(BaseCommand):
                             help='Datetime field to filter. Def: created_on', )
 
     def handle(self, *args, **options):
-        model = apps.get_model(options.get('app_label'), options.get('model'))
+        model = apps.get_model(options['app_label'], options['model'])
+
         kwargs = {
-            '{}__lte'.format(options.get('field_name')): timezone.now() - timedelta(days=options.get('days'))
+            '{}__lte'.format(options.get('field_name')): timezone.now() - timedelta(days=int(options['days']))
         }
         model.objects.filter(**kwargs).delete()

@@ -41,6 +41,11 @@ class {{ model_name }}Admin(admin.ModelAdmin):
 """
 
 
+def render_template(tmpl: str, **ctx) -> str:
+    tmplt = template.Template(tmpl)
+    return tmplt.render(template.Context(ctx))
+
+
 class Command(AppCommand):
     help = "A handy command to create ModelAdmin classes (with import/export resource classes) for Models."
 
@@ -74,7 +79,7 @@ class Command(AppCommand):
         admin_file = os.path.join(app_config.path, 'admin.py')
         res_file_content = ""
         admin_file_content = ""
-        has_resource_class = options.get('resource') and is_resource_pkg_installed
+        has_resource_class = bool(options.get('resource') and is_resource_pkg_installed)
 
         for model in app_config.get_models():
             if not options.get('all'):
@@ -85,8 +90,7 @@ class Command(AppCommand):
             if not res_file_content:
                 res_file_content = read_if_exists(resource_file)
                 # add imports if this is the first time creating this file
-                tmpl = template.Template(RES_IMPORT_TEMPLATE)
-                res_file_content += tmpl.render(template.Context(dict(app_name=app_config.name)))
+                res_file_content += render_template(RES_IMPORT_TEMPLATE, app_name=app_config.name)
 
             if not admin_file_content:
                 admin_file_content = read_if_exists(admin_file)
@@ -108,24 +112,17 @@ class Command(AppCommand):
             writer.write(admin_file_content)
 
 
-def get_resource_cls(model, model_class):
-    tmpl = template.Template(RES_CLASS_TEMPLATE)
-    return tmpl.render(
-        template.Context(
-            dict(
-                model_name=model.__name__,
-                model_class=model_class,
-            )
-        )
+def get_resource_cls(model, model_class) -> str:
+    return render_template(
+        RES_CLASS_TEMPLATE,
+        model_name=model.__name__,
+        model_class=model_class,
     )
 
 
-def get_admin_cls(has_resource_class: bool, model):
-    tmpl = template.Template(ADMIN_CLASS_WITH_RES_TEMPLATE if has_resource_class else ADMIN_CLASS_TEMPLATE)
-    return tmpl.render(
-        template.Context(
-            dict(
-                model_name=model.__name__
-            )
-        )
+def get_admin_cls(has_resource_class: bool, model) -> str:
+    tmpl = ADMIN_CLASS_WITH_RES_TEMPLATE if has_resource_class else ADMIN_CLASS_TEMPLATE
+    return render_template(
+        tmpl,
+        model_name=model.__name__
     )

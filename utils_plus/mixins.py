@@ -2,7 +2,9 @@
 Usage: see tests/test_mixins.py
 """
 # pylint: disable=R0201
+from typing import Dict, Any, Optional
 
+from django.db.models import Model
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
@@ -11,28 +13,29 @@ from utils_plus.router import url
 
 __all__ = ['ContextMixinPlus', 'CreateUpdateMixin', ]
 
+Ctx = Dict[str, Any]
+
 
 class ContextMixinPlus(ContextMixin):
     """
     This mixin will add all url parameters to context and updates context with extra_context defined in inherited
     classes
     """
-    extra_context = {}  # This can be overridden by subclasses; it must be returning a dict
-    kwargs = {}
+    extra_context: Ctx = {}  # This can be overridden by subclasses; it must be returning a dict
+    kwargs: Ctx = {}  # the one set by View dispatch
 
-    def get_extra_context(self):
+    def get_extra_context(self) -> Ctx:
         """
         this method will be overridden
         Returns:
             dict:
         """
-        return {}
+        return self.extra_context
 
     def get_context_data(self, **kwargs):
         ctx = super(ContextMixinPlus, self).get_context_data(**kwargs)  # type: dict
         for k in self.kwargs:
             ctx[k] = self.kwargs[k]
-        ctx.update(self.extra_context)
         ctx.update(self.get_extra_context())
         return ctx
 
@@ -42,23 +45,19 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
      Please see method ``.urls`` method for more information on routing this view.
     """
     pk_type = "int"  # to restrict on the url-path
+    url_pk_name = "pk"
 
-    def _set_object(self, kwargs):
+    def opt_get_object(self, kwargs) -> Optional[Model]:
+        """Return model-object if `pk` in url's kwargs'.
         """
-
-        Args:
-            kwargs (dict):
-
-        Returns:
-        """
-        return self.get_object() if 'pk' in kwargs else None
+        return self.get_object() if self.url_pk_name in kwargs else None
 
     def get(self, request, *args, **kwargs):
-        self.object = self._set_object(kwargs)
+        self.object = self.opt_get_object(kwargs)
         return super(CreateUpdateMixin, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.object = self._set_object(kwargs)
+        self.object = self.opt_get_object(kwargs)
         return super(CreateUpdateMixin, self).post(request, *args, **kwargs)
 
     @classmethod

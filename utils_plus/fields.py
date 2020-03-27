@@ -34,7 +34,7 @@ class ChoicesEnumField(models.CharField):
             del kwargs['choices']
         return name, path, args, kwargs
 
-    def to_python(self, value):
+    def to_python(self, value) -> ChoicesEnum:
         if not isinstance(value, self.enum_class):
             return self.enum_class[value]
 

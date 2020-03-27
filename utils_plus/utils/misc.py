@@ -1,4 +1,5 @@
 import os
+from typing import List, Optional
 
 from django.apps import apps
 from django.urls import reverse_lazy
@@ -6,7 +7,7 @@ from django.urls import reverse_lazy
 IP_ADDRESS_HEADERS = ('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR')
 
 
-def get_ip_address(request):
+def get_ip_address(request) -> Optional[str]:
     """
         return ip address from any of the possible header address
     Args:
@@ -44,7 +45,7 @@ def reverse_url(urlname, *args, **kwargs):
     return reverse_lazy(urlname, args=args, kwargs=kwargs)
 
 
-def app_fixtures(*app_names):
+def app_fixtures(*app_names) -> List[str]:
     """
         return all fixture names inside app
     Args:
@@ -66,7 +67,7 @@ def app_fixtures(*app_names):
     return files
 
 
-def read_if_exists(file):
+def read_if_exists(file) -> str:
     content = ""
     if os.path.exists(file):
         with open(file) as reader:

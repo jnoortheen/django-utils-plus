@@ -1,6 +1,5 @@
 import os
 
-from django import template
 from django.core.management.base import AppCommand
 
 from utils_plus.utils.misc import read_if_exists
@@ -14,6 +13,8 @@ def {{name}}(get_response):
     return middleware
 
 """
+
+from .create_admin import render_template
 
 
 class Command(AppCommand):
@@ -29,8 +30,7 @@ class Command(AppCommand):
         mware_name = "{}_middleware".format(options['name'])
 
         if mware_name not in content:
-            tmpl = template.Template(CLASS_TMPL)
-            content += tmpl.render(template.Context(dict(name=mware_name)))
+            content += render_template(CLASS_TMPL, name=mware_name)
 
         # finaly write file contents
         if content:

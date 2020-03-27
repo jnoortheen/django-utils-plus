@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import mimetypes
+from typing import Optional
 
 from django.http import HttpResponse, FileResponse
 from django.views import View
@@ -28,9 +29,11 @@ def return_path_view(request, *args, **kwargs):
 
 
 class FileResponseView(View):
-    file_path = None
+    file_path: Optional[str] = None
 
     def get(self, request):
+        if not self.file_path:
+            raise NotImplementedError("file_path should be filled")
         content_type, encoding = mimetypes.guess_type(self.file_path)
         file = open(self.file_path, "rb")
         response = FileResponse(file, content_type=content_type)

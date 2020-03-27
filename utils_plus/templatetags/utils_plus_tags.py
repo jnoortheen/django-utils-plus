@@ -12,7 +12,7 @@ register = template.Library()
 
 
 @register.filter
-def klass(obj):
+def klass(obj) -> str:
     """
         returns class name of the object. Might be useful when rendering widget class names
     Args:
@@ -28,23 +28,16 @@ def klass(obj):
     return obj.__class__.__name__
 
 
-if settings.DEBUG:
-    # add node_modules to list of static folders to find and load in local development
-    settings.STATICFILES_DIRS = settings.STATICFILES_DIRS + [
-        get_node_modules_dir()
-    ]
-
-
 @register.simple_tag
-def npmcdn(cdn_url, path):
+def npmcdn(cdn_url, path) -> str:
     """
 
         Args:
-            cdn: URL of CDN like `unpkg.com` or `cdn.jsdelivr.net/npm`
-            path:
+            cdn_url: URL of CDN like `unpkg.com` or `cdn.jsdelivr.net/npm`
+            path: path to js/css file. should follow the directory structure as inside ``node_modules``
 
         Returns:
-
+            str: URL
         """
     return (
         static(path)
@@ -54,7 +47,7 @@ def npmcdn(cdn_url, path):
 
 
 @register.simple_tag
-def unpkg(path):
+def unpkg(path) -> str:
     """
         Alternative to standard `static` template tag. When you are using external static files/libraries
         like bootstrap, jquery you may want to load them from CDNs instead of managing them yourself in production.
@@ -85,7 +78,7 @@ def unpkg(path):
 
 
 @register.simple_tag
-def jsdelivr(path):
+def jsdelivr(path) -> str:
     """
         same as above with CDN as jsdelivr
     """
@@ -93,7 +86,7 @@ def jsdelivr(path):
     return npmcdn('cdn.jsdelivr.net/npm', path)
 
 
-def jsdelivr_combined_tags_helper(tag_template, *paths):
+def jsdelivr_combined_tags_helper(tag_template, *paths) -> str:
     if settings.DEBUG:
         tag_str = "".join([
             tag_template.format(static(path)) for path in paths

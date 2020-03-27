@@ -1,6 +1,7 @@
 # pylint: disable = W0212
 import enum
 from functools import total_ordering
+from typing import List
 
 
 class StrEnum(str, enum.Enum):
@@ -77,24 +78,20 @@ class ChoicesEnum(enum.Enum):
     @property
     def member_index(self):
         if not hasattr(self.__class__, '_reverse_index'):
-            self.__class__._reverse_index = {cls: idx for idx, cls in enumerate(self.__class__)}
-        return self.__class__._reverse_index[self]
+            self.__class__._reverse_index = {cls: idx for idx, cls in enumerate(self.__class__)}  # type: ignore
+        return self.__class__._reverse_index[self]  # type: ignore
+
+    def get_at(self, index: int) -> "ChoicesEnum":
+        members: List['ChoicesEnum'] = list(self.__class__)
+        if index >= len(members) or index < 0:
+            return self
+        return members[index]
 
     def next(self):
-        cls = self.__class__
-        members = list(cls)
-        index = self.member_index + 1
-        if index >= len(members):
-            return self
-        return members[index]
+        return self.get_at(self.member_index + 1)
 
     def prev(self):
-        cls = self.__class__
-        members = list(cls)
-        index = self.member_index - 1
-        if index < 0:
-            return self
-        return members[index]
+        return self.get_at(self.member_index - 1)
 
     @classmethod
     def max_length(cls):

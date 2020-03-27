@@ -1,17 +1,17 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
+from typing import TypeVar, Dict, Any, Tuple
 
 from django.db import models
+
+T = TypeVar('T', bound='QueryManager')
 
 
 class QueryManager(models.Manager):
     """
         A DRYer way to set select_related, prefetch_related & filters to queryset
     """
-    _args = ()
-    _kwargs = {}
+    _args: Tuple[models.Q, ...] = ()
+    _kwargs: Dict[str, Any] = {}
 
     def __init__(self, *args, **kwargs):
         """
@@ -22,7 +22,7 @@ class QueryManager(models.Manager):
         self._queryset_methods = OrderedDict()
         super(QueryManager, self).__init__()
 
-    def _save_args(self, name, args):
+    def _save_args(self: T, name, args) -> T:
         """
 
         Args:
@@ -72,7 +72,7 @@ class QueryManager(models.Manager):
         """
         return self._save_args('order_by', args)
 
-    def get_queryset(self):
+    def get_queryset(self) -> models.QuerySet:
         """
 
         Returns:
