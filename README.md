@@ -30,14 +30,24 @@ pip install git://github.com/jnoortheen/django-utils-plus.git@master#egg=django-
  - create_middleware
     
 ## Template tags
- - klass
- - unpkg
+ 1. klass
+ 1. [unpkg](#unpkg)
+ 1. [jsdelivr](#jsdelivr) (combined support as well)
  
-### unpkg
+### serve static files using npm
+ it is convenient to keep track of all external `js` libraries in project using 
+ a `package.json`. It is used to keep latest version of available packages. 
+ The following template tags can be used to serve these packages right from CDN on production and 
+ `node_modules` during development
+
+#### unpkg
  Alternative to standard `static` template tag. When you are using external static files/libraries
 like bootstrap, jquery you may want to load them from CDNs instead of managing them yourself in production.
 This tag helps you to do that. When `settings.DEBUG` is false, this will return paths that resolved from
 `package.json` to versioned `unpkg.com`. Otherwise it will resolve to `node_modules` locally.
+
+#### jsdelivr
+    like `unpkg` adds support for using https://www.jsdelivr.com/
 
 #### Usage:
 

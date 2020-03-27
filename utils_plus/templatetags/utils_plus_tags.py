@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
+from utils_plus.utils import get_node_modules_dir
 
 from utils_plus.utils.html import script_tag, link_css_tag
 from ..utils import get_npm_pkg_path
@@ -26,6 +27,14 @@ def klass(obj) -> str:
     'ModelBase'
     """
     return obj.__class__.__name__
+
+
+if settings.DEBUG:
+    # todo: replace this with finder implementation
+    # add node_modules to list of static folders to find and load in local development
+    settings.STATICFILES_DIRS = settings.STATICFILES_DIRS + [
+        get_node_modules_dir()
+    ]
 
 
 @register.simple_tag
