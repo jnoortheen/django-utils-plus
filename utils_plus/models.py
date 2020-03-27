@@ -3,7 +3,7 @@ from typing import TypeVar, Dict, Any, Tuple
 
 from django.db import models
 
-T = TypeVar('T', bound='QueryManager')
+ManagerType = TypeVar('ManagerType', bound='QueryManager')
 
 
 class QueryManager(models.Manager):
@@ -22,7 +22,7 @@ class QueryManager(models.Manager):
         self._queryset_methods = OrderedDict()
         super(QueryManager, self).__init__()
 
-    def _save_args(self: T, name, args) -> T:
+    def _save_args(self: ManagerType, name, args) -> ManagerType:
         """
 
         Args:
