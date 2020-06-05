@@ -89,33 +89,18 @@ after using `Url`
 ```python
 ### urls.py ###
 
-from utils_plus.router import Url
+from utils_plus.router import url
 
-with Url('editor') as u:
-    with u.int('doc_pk'):
-        u('edit', EditView.as_view(), 'edit-doc')
-        u('export', ExportView.as_view(), 'export-doc')
-u('docs', Docs.as_view(), 'student-documents')
-u('publish', PulishOrDelete.as_view(), 'publish_document', action='publish')
-u('delete', PulishOrDelete.as_view(), 'delete_document')
-
-urlpatterns = u.urlpatterns
-```
-
-you could also do this if you aren't afraid of typing more. There is no need to define the urlpatterns variable
-separately
-```python
-### urls.py ###
-
-from utils_plus.router import Url
-
-with Url('editor') as urlpatterns:
-    with urlpatterns.int('doc_pk'):
-        urlpatterns('edit', EditView.as_view(), 'edit-doc')
-        urlpatterns('export', ExportView.as_view(), 'export-doc')
-urlpatterns('docs', Docs.as_view(), 'student-documents')
-urlpatterns('publish', PulishOrDelete.as_view(), 'publish_document', action='publish')
-urlpatterns('delete', PulishOrDelete.as_view(), 'delete_document')
+urlpatterns = list(
+        url('editor')[
+            url.int('doc_pk')[
+                url('edit', DocEditorView.as_view(), 'edit-doc'),
+                url('export', DocExporterView.as_view(), 'export-doc'),
+            ]
+        ]
+        + url('docs', Docs.as_view(), 'student-documents')
+        + url('publish', DeleteOrPublistDocument.as_view(), 'publish_document', action='publish')
+        + url('delete', DeleteOrPublistDocument.as_view(), 'delete_document')
 ```
 
 see `tests/test_router.py` for more use cases
@@ -159,6 +144,6 @@ class Post(models.Model):
 1. **CreateUpdateView**:
     - combines CreateView and UpdateView
 
-## Testing the project
+# Testing the project
     - clone the repo and run migrations after installing dependencies
     - `inv test` will run all the test for the app
