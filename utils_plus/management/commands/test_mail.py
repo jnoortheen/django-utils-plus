@@ -17,7 +17,7 @@ class Command(BaseCommand):
         """
         parser.add_argument(
             '-to', type=str, default='',
-            help='To email ID e.g. person@testmail.com. Default will be the settings.MANGERS if not given',
+            help='To email ID e.g. person@testmail.com. Default will be the settings.MANAGERS if not given',
         )
 
     def handle(self, *args, **options):
