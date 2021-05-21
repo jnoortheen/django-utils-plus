@@ -34,20 +34,24 @@ python = ">= 3.6"
 django = ">=2.2"
 
 [tool.poetry.dev-dependencies]
-pytest-django = { version = "^3.*", optional = true }
-pytest-pythonpath = { version = "^0.7.3", optional = true }
+# testing
+pytest-django = { version = "*", optional = true }
+pytest-pythonpath = { version = "*", optional = true }
 pytest-cov = { version = "*", optional = true }
 django_dynamic_fixture = { version = "*", optional = true }
-rope = "*"
-invoke = "*"
+tox = "*"
+
+# linters
 black = { version = "^18.3-alpha.0", allow-prereleases = true }
+pylint = "*"
+pylint-django = "*"
+django-stubs = "*"
+mypy = "*"
+
+# local tools
+invoke = "*"
 sniffer = "^0.4.1"
-pylint = "^2.4.4"
-pyinotify = "^0.9.6"
-pylint-django = "^2.0.14"
-tox = "^3.14.6"
-django-stubs = "^1.5.0"
-mypy = "^0.770"
+pyinotify = "*"
 
 [tool.poetry.extras]
 test = ["pytest-django", "pytest-pythonpath", "django_dynamic_fixture"]
