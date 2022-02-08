@@ -37,7 +37,7 @@
     "sticky-table-headers": "^0.1.19",
     "summernote": "^0.8.8",
     "switchery": "0.0.2",
-    "video.js": "^6.2.0",
+    "video.js": "^7.14.3",
     "weather-icons": "^1.3.2"
   }
 }
