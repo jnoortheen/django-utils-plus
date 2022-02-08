@@ -111,7 +111,7 @@ python-versions = "*"
 
 [[package]]
 name = "django"
-version = "3.2.4"
+version = "3.2.11"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
@@ -659,8 +659,8 @@ distlib = [
     {file = "distlib-0.3.1.zip", hash = "sha256:edf6116872c863e1aa9d5bb7cb5e05a022c519a4594dc703843343a9ddd9bff1"},
 ]
 django = [
-    {file = "Django-3.2.4-py3-none-any.whl", hash = "sha256:ea735cbbbb3b2fba6d4da4784a0043d84c67c92f1fdf15ad6db69900e792c10f"},
-    {file = "Django-3.2.4.tar.gz", hash = "sha256:66c9d8db8cc6fe938a28b7887c1596e42d522e27618562517cc8929eb7e7f296"},
+    {file = "Django-3.2.11-py3-none-any.whl", hash = "sha256:0a0a37f0b93aef30c4bf3a839c187e1175bcdeb7e177341da0cb7b8194416891"},
+    {file = "Django-3.2.11.tar.gz", hash = "sha256:69c94abe5d6b1b088bf475e09b7b74403f943e34da107e798465d2045da27e75"},
 ]
 django-dynamic-fixture = [
     {file = "django-dynamic-fixture-3.1.1.tar.gz", hash = "sha256:90d9d68ec373dce97a4a9ba3ec6a39cf10918e9c222fdf231074cfb668d14ea2"},
