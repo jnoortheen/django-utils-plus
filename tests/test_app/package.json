@@ -24,7 +24,7 @@
     "jquery": "^3.5.0",
     "jquery-migrate": "^3.0.0",
     "jquery-ui": "^1.13.0",
-    "jquery-validation": "^1.19.3",
+    "jquery-validation": "^1.19.4",
     "jquery-visible": "^1.2.0",
     "jquery.maskedinput": "^1.4.1",
     "jquery.rateit": "^1.1.1",
