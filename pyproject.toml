@@ -1,62 +1,46 @@
-[tool.poetry]
+[project.optional-dependencies]
+dev = [
+    "invoke",
+    "tox",
+]
+test = [
+    "pytest-django",
+    "pytest-pythonpath",
+    "pytest-cov",
+    "django_dynamic_fixture",
+]
+lint = [
+    "pylint",
+    "pylint-django",
+    "django-stubs",
+    "mypy",
+    "black",
+]
+
+[tool.pdm.build]
+includes = ["utils_plus"]
+
+[project]
+# PEP 621 project metadata
+# See https://www.python.org/dev/peps/pep-0621/
+authors = [
+    { name = "jnoortheen", email = "jnoortheen@gmail.com" },
+]
+license = { text = "MIT" }
+requires-python = ">=3.7"
+dependencies = [
+    "django>=2.2",
+]
 name = "django-utils-plus"
 version = "0.7.4"
 description = "A reusable Django app with small set of utilities for urls, viewsets, commands and more"
-authors = ["jnoortheen <jnoortheen@gmail.com>"]
-license = "MIT"
-readme = 'README.md'
-repository = "https://github.com/jnoortheen/django-utils-plus"
+readme = "README.md"
+classifiers = ["Environment :: Web Environment", "Framework :: Django", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Natural Language :: English", "Operating System :: OS Independent", "Programming Language :: Python", "Programming Language :: Python :: 3", "Topic :: Internet :: WWW/HTTP", "Topic :: Internet :: WWW/HTTP :: Dynamic Content", "Topic :: Utilities", "Topic :: Software Development :: Libraries", "Topic :: Software Development :: Libraries :: Python Modules"]
+
+[project.urls]
 homepage = "https://github.com/jnoortheen/django-utils-plus"
-
-classifiers = [
-    'Environment :: Web Environment',
-    "Framework :: Django",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    'Programming Language :: Python :: 3',
-    'Topic :: Internet :: WWW/HTTP',
-    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    "Topic :: Utilities",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
-
-packages = [
-    { include = "utils_plus" },
-]
-
-
-[tool.poetry.dependencies]
-python = ">= 3.6"
-django = ">=2.2"
-
-[tool.poetry.dev-dependencies]
-# testing
-pytest-django = { version = "*", optional = true }
-pytest-pythonpath = { version = "*", optional = true }
-pytest-cov = { version = "*", optional = true }
-django_dynamic_fixture = { version = "*", optional = true }
-tox = "*"
-
-# linters
-black = { version = "^18.3-alpha.0", allow-prereleases = true }
-pylint = "*"
-pylint-django = "*"
-django-stubs = "*"
-mypy = "*"
-
-# local tools
-invoke = "*"
-sniffer = "^0.4.1"
-pyinotify = "*"
-
-[tool.poetry.extras]
-test = ["pytest-django", "pytest-pythonpath", "django_dynamic_fixture"]
+repository = "https://github.com/jnoortheen/django-utils-plus"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
