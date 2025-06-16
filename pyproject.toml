@@ -52,9 +52,11 @@ dev = [
 ]
 
 [tool.ruff]
+line-length = 99  # Same as black
+
+[tool.ruff.lint]
 # Enable pycodestyle (`E`), Pyflakes (`F`), and import sorting (`I`) codes
 select = ["E", "F", "I"]
-line-length = 99  # Same as black
 ignore = [
     "F401", 
     "E501", # line too long
@@ -90,5 +92,5 @@ exclude = [
 ]
 
 # Sort imports
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["utils_plus"]
