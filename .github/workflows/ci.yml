@@ -30,7 +30,7 @@ jobs:
       run: uv sync
     
     - name: Run tests
-      run: make lint test
+      run: uv run make lint test
     
     - name: Build package
       run: uv build
