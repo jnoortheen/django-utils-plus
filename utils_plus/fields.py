@@ -30,7 +30,7 @@ class ChoicesEnumField(models.CharField):
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        args.insert(0, self.enum_class)
+        args.insert(0, self.enum_class) # type: ignore
         if 'choices' in kwargs:
             del kwargs['choices']
         return name, path, args, kwargs

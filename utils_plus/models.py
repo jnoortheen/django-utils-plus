@@ -55,7 +55,7 @@ class QueryManager(models.Manager):
         """
         return self._save_args('select_related', args)
 
-    def values(self, *args):
+    def values(self, *args):  # type: ignore
         return self._save_args('values', args)
 
     def only(self, *args):

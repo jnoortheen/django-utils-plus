@@ -84,8 +84,8 @@ class CreateUpdateMixin(SingleObjectTemplateResponseMixin, ModelFormMixin, Proce
             `tests/test_app/urls.py`
         """
         return (
-                url('add', view=cls.as_view(**initkwargs), name=f'{name_prefix}-add') +
+                url('add', view=cls.as_view(**initkwargs), name=f'{name_prefix}-add') + # type: ignore
                 url.pk()[
-                    url('edit', view=cls.as_view(**initkwargs), name=f'{name_prefix}-edit', dtype=cls.pk_type)
+                    url('edit', view=cls.as_view(**initkwargs), name=f'{name_prefix}-edit', dtype=cls.pk_type) # type: ignore
                 ]
         )
