@@ -1,9 +1,9 @@
 """Configuration file for sniffer."""
 
-import time
 import subprocess
+import time
 
-from sniffer.api import select_runnable, file_validator, runnable
+from sniffer.api import file_validator, runnable, select_runnable
 
 try:
     from pync import Notifier

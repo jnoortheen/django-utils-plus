@@ -1,7 +1,9 @@
 from utils_plus.router import url
 from utils_plus.views import return_path_view as view
 
-str_iter = lambda x: list(map(str, x))
+
+def str_iter(x):
+    return list(map(str, x))
 
 
 def test_nesting_levels():

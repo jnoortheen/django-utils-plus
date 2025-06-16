@@ -3,6 +3,7 @@ import os
 from django.core.management.base import AppCommand
 
 from utils_plus.utils.misc import read_if_exists
+
 from .create_admin import render_template
 
 CLASS_TMPL = """\

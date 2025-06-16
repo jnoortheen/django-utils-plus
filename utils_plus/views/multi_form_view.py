@@ -1,8 +1,12 @@
-from typing import Dict, Any, Type, TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Any, Dict, List, Type
 
 from django.forms.forms import Form
 from django.http import HttpRequest
-from django.http.response import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
+from django.http.response import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
 from django.views.generic.base import ContextMixin, TemplateResponseMixin
 from django.views.generic.edit import ProcessFormView
 

@@ -5,8 +5,9 @@ import pytest
 
 @pytest.fixture
 def records(db):
-    from .test_app.models import Book
     from django_dynamic_fixture import G
+
+    from .test_app.models import Book
     # create three records
     for i in range(3):
         G(Book, authors=3, name='filter')

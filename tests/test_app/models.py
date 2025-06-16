@@ -3,8 +3,8 @@ from django.db import models
 # Create your models here.
 from utils_plus.abstracts import CheckDeletableModelMixin
 from utils_plus.choices import ChoicesEnum
-from utils_plus.models import QueryManager
 from utils_plus.fields import ChoicesEnumField
+from utils_plus.models import QueryManager
 
 
 class Title(ChoicesEnum):

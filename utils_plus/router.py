@@ -1,8 +1,8 @@
 # pylint: disable=C0103,R0201
-from typing import Tuple, Union, Callable, Optional, Any
+from typing import Any, Callable, Optional, Tuple, Union
 
 from django.http import HttpResponse
-from django.urls import re_path, path, URLPattern, URLResolver
+from django.urls import URLPattern, URLResolver, path, re_path
 
 # in case of include we get a tuple
 ViewType = Optional[Union[Callable[..., HttpResponse], Tuple[Any, Any, Any]]]

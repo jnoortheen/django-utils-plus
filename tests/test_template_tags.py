@@ -1,4 +1,8 @@
-from utils_plus.templatetags.utils_plus_tags import *
+from utils_plus.templatetags.utils_plus_tags import (
+    jsdelivr_combine_css,
+    jsdelivr_combine_js,
+    unpkg,
+)
 
 
 def test_jsdelivr_combine_js(settings):

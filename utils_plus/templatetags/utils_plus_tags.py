@@ -4,9 +4,10 @@ from django import template
 from django.conf import settings
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
-from utils_plus.utils import get_node_modules_dir
 
-from utils_plus.utils.html import script_tag, link_css_tag
+from utils_plus.utils import get_node_modules_dir
+from utils_plus.utils.html import link_css_tag, script_tag
+
 from ..utils import get_npm_pkg_path
 
 register = template.Library()

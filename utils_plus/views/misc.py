@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import mimetypes
 from typing import Optional
 
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse, HttpResponse
 from django.views import View
 
 from ..mixins import CreateUpdateMixin

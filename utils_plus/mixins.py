@@ -2,7 +2,7 @@
 Usage: see tests/test_mixins.py
 """
 # pylint: disable=R0201
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 from django.db.models import Model
 from django.views.generic.base import ContextMixin

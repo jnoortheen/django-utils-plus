@@ -1,7 +1,7 @@
 import codecs
 import json
 import os
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 from django.conf import settings
 

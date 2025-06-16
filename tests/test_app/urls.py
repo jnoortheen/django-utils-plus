@@ -1,5 +1,6 @@
 from utils_plus.router import url
 from utils_plus.views import return_path_view
+
 from .views import CreateUpdateAuthorView
 
 urlpatterns = list(

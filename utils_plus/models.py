@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import TypeVar, Dict, Any, Tuple
+from typing import Any, Dict, Tuple, TypeVar
 
 from django.db import models
 

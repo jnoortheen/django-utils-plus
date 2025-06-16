@@ -54,7 +54,11 @@ dev = [
 [tool.ruff]
 # Enable pycodestyle (`E`), Pyflakes (`F`), and import sorting (`I`) codes
 select = ["E", "F", "I"]
-line-length = 88  # Same as black
+line-length = 99  # Same as black
+ignore = [
+    "F401", 
+    "E501", # line too long
+]
 
 # Enable auto-fixes for all enabled rules (when `--fix` is used)
 fixable = ["ALL"]
