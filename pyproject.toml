@@ -5,7 +5,6 @@ dev = [
 ]
 test = [
     "pytest-django",
-    "pytest-pythonpath",
     "pytest-cov",
     "django_dynamic_fixture",
 ]
