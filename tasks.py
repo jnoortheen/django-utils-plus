@@ -29,4 +29,4 @@ def test(c):
 @invoke.task
 def lint(c):
     c.run("mypy utils_plus")
-    c.run("pylint utils_plus")
+    c.run("ruff check . --fix")

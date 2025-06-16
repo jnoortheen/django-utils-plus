@@ -10,15 +10,16 @@ test = [
     "django_dynamic_fixture",
 ]
 lint = [
-    "pylint",
-    "pylint-django",
     "django-stubs",
     "mypy",
-    "black",
+    "ruff",
 ]
 
 [tool.pdm.build]
 includes = ["utils_plus"]
+
+[tool.pdm.version]
+source = "scm"
 
 [project]
 # PEP 621 project metadata
@@ -27,12 +28,12 @@ authors = [
     { name = "jnoortheen", email = "jnoortheen@gmail.com" },
 ]
 license = { text = "MIT" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
-    "django>=2.2",
+    "django>=4.2",
 ]
 name = "django-utils-plus"
-version = "0.7.4"
+dynamic = ["version"]
 description = "A reusable Django app with small set of utilities for urls, viewsets, commands and more"
 readme = "README.md"
 classifiers = ["Environment :: Web Environment", "Framework :: Django", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Natural Language :: English", "Operating System :: OS Independent", "Programming Language :: Python", "Programming Language :: Python :: 3", "Topic :: Internet :: WWW/HTTP", "Topic :: Internet :: WWW/HTTP :: Dynamic Content", "Topic :: Utilities", "Topic :: Software Development :: Libraries", "Topic :: Software Development :: Libraries :: Python Modules"]
@@ -44,3 +45,46 @@ repository = "https://github.com/jnoortheen/django-utils-plus"
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
+
+[dependency-groups]
+dev = [
+    "django-utils-plus[dev, test, lint]",
+]
+
+[tool.ruff]
+# Enable pycodestyle (`E`), Pyflakes (`F`), and import sorting (`I`) codes
+select = ["E", "F", "I"]
+line-length = 88  # Same as black
+
+# Enable auto-fixes for all enabled rules (when `--fix` is used)
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Sort imports
+[tool.ruff.isort]
+known-first-party = ["utils_plus"]
