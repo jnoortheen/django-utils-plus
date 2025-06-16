@@ -147,3 +147,18 @@ class Post(models.Model):
 # Testing the project
     - clone the repo and run migrations after installing dependencies
     - `inv test` will run all the test for the app
+
+# Development
+
+## Install dependencies
+
+```commandline
+uv sync
+make lint test
+```
+
+## Release
+
+To publish a new release:
+1. Create a new release on GitHub and tag it with a version number (e.g., v0.7.5)
+2. The workflow will automatically run tests, linting, and publish to PyPI
