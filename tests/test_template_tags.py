@@ -10,7 +10,7 @@ def test_jsdelivr_combine_js(settings):
     assert jsdelivr_combine_js(
         'bootstrap/dist/js/bootstrap.min.js',
         'jquery/dist/jquery.min.js'
-    ) == """<script src="//cdn.jsdelivr.net/combine//npm/bootstrap@3.4.1/dist/js/bootstrap.min.js,npm/jquery@3.4.0/dist/jquery.min.js"></script>"""
+    ) == """<script src="//cdn.jsdelivr.net/combine//npm/bootstrap@3.4.1/dist/js/bootstrap.min.js,npm/jquery@3.5.0/dist/jquery.min.js"></script>"""
 
 
 def test_jsdelivr_combine_css(settings):
