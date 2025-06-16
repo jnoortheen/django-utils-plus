@@ -1,8 +1,4 @@
 [project.optional-dependencies]
-dev = [
-    "invoke",
-    "tox",
-]
 test = [
     "pytest-django",
     "pytest-cov",
@@ -47,7 +43,7 @@ build-backend = "pdm.pep517.api"
 
 [dependency-groups]
 dev = [
-    "django-utils-plus[dev, test, lint]",
+    "django-utils-plus[test, lint]",
 ]
 
 [tool.ruff]
